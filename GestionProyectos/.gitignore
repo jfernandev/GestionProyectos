@@ -37,3 +37,20 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Credenciales
+.env
+
+# IntelliJ
+.idea/
+*.iml
+
+# Maven
+target/
+
+# Archivos compilados
+*.class
+
+# Logs
+*.log
+logs/
