@@ -5,7 +5,6 @@ public class App {
     public static void main(String[] args) {
 
         try {
-            // Comprobamos que Hibernate puede inicializarse
             System.out.println("Iniciando aplicación...");
 
             HibernateUtil.getSessionFactory();
@@ -17,7 +16,6 @@ public class App {
             e.printStackTrace();
 
         } finally {
-            // Cerramos Hibernate al finalizar la aplicación
             HibernateUtil.cerrar();
         }
     }
