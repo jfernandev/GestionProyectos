@@ -7,15 +7,14 @@ import java.util.Scanner;
 
 public class MenuPrincipal {
 
-    // Scanner compartido por todos los menús de la aplicación
     private final Scanner scanner;
 
-    // Constructor: recibe el Scanner creado desde App
+    // Constructor: recibe el Scanner compartido por la aplicación
     public MenuPrincipal(Scanner scanner) {
         this.scanner = scanner;
     }
 
-    // Inicia el menú principal de la aplicación
+    // Inicia el menú principal
     public void iniciar() {
 
         int opcion;
@@ -28,23 +27,21 @@ public class MenuPrincipal {
             switch (opcion) {
 
                 case 1:
-                    System.out.println("\nApartado de gestión de proveedores.");
-                    // Aquí conectaremos posteriormente el menú de proveedores
+                    // Abrimos el submenú de proveedores
+                    MenuProveedores menuProveedores = new MenuProveedores(scanner);
+                    menuProveedores.iniciar();
                     break;
 
                 case 2:
                     System.out.println("\nApartado de gestión de piezas.");
-                    // Aquí conectaremos posteriormente el menú de piezas
                     break;
 
                 case 3:
                     System.out.println("\nApartado de gestión de proyectos.");
-                    // Aquí conectaremos posteriormente el menú de proyectos
                     break;
 
                 case 4:
                     System.out.println("\nApartado de gestión de gestiones.");
-                    // Aquí conectaremos posteriormente el menú de gestiones
                     break;
 
                 case 5:
@@ -59,7 +56,7 @@ public class MenuPrincipal {
         } while (opcion != 5);
     }
 
-    // Muestra las opciones disponibles
+    // Muestra las opciones principales
     private void mostrarMenu() {
 
         System.out.println("\n========================================");
