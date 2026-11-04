@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+
+        <!-- Controlador JDBC de MariaDB -->
+        <property name="hibernate.connection.driver_class">
+            org.mariadb.jdbc.Driver
+        </property>
+
+        <!-- Dirección de nuestra base de datos -->
+        <property name="hibernate.connection.url">
+            jdbc:mariadb://localhost:33060/gestion_proyectos
+        </property>
+
+        <!-- Usuario de la aplicación -->
+        <property name="hibernate.connection.username">
+            gestion_user
+        </property>
+
+        <!-- Dialecto SQL de MariaDB -->
+        <property name="hibernate.dialect">
+            org.hibernate.dialect.MariaDBDialect
+        </property>
+
+        <!-- Mostrar las consultas SQL en consola -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <!-- Actualizar el esquema sin eliminar los datos existentes -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+    </session-factory>
+</hibernate-configuration>
