@@ -3,7 +3,11 @@ package modelo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "proyectos")
@@ -21,6 +25,10 @@ public class Proyecto {
     // Ciudad donde se desarrolla el proyecto
     @Column(name = "ciudad", nullable = false, length = 100)
     private String ciudad;
+
+    // Un proyecto puede tener muchas gestiones
+    @OneToMany(mappedBy = "proyecto")
+    private List<Gestion> gestiones = new ArrayList<>();
 
     // Constructor vacío requerido por Hibernate
     public Proyecto() {
@@ -56,6 +64,14 @@ public class Proyecto {
 
     public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
+    }
+
+    public List<Gestion> getGestiones() {
+        return gestiones;
+    }
+
+    public void setGestiones(List<Gestion> gestiones) {
+        this.gestiones = gestiones;
     }
 
     @Override

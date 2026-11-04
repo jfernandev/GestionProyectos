@@ -3,7 +3,11 @@ package modelo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "proveedores")
@@ -25,6 +29,10 @@ public class Proveedor {
     // Dirección postal del proveedor
     @Column(name = "direccion", nullable = false, length = 200)
     private String direccion;
+
+    // Un proveedor puede tener muchas gestiones
+    @OneToMany(mappedBy = "proveedor")
+    private List<Gestion> gestiones = new ArrayList<>();
 
     // Constructor vacío requerido por Hibernate
     public Proveedor() {
@@ -69,6 +77,14 @@ public class Proveedor {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public List<Gestion> getGestiones() {
+        return gestiones;
+    }
+
+    public void setGestiones(List<Gestion> gestiones) {
+        this.gestiones = gestiones;
     }
 
     @Override

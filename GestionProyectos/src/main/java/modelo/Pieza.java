@@ -3,9 +3,12 @@ package modelo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "piezas")
@@ -20,13 +23,17 @@ public class Pieza {
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    // Precio de la pieza, utilizando precisión decimal
+    // Precio de la pieza
     @Column(name = "precio", nullable = false, precision = 10, scale = 2)
     private BigDecimal precio;
 
     // Descripción de la pieza
     @Column(name = "descripcion", length = 500)
     private String descripcion;
+
+    // Una pieza puede aparecer en muchas gestiones
+    @OneToMany(mappedBy = "pieza")
+    private List<Gestion> gestiones = new ArrayList<>();
 
     // Constructor vacío requerido por Hibernate
     public Pieza() {
@@ -71,6 +78,14 @@ public class Pieza {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public List<Gestion> getGestiones() {
+        return gestiones;
+    }
+
+    public void setGestiones(List<Gestion> gestiones) {
+        this.gestiones = gestiones;
     }
 
     @Override
