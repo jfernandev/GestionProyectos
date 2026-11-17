@@ -1,4 +1,3 @@
-
 package servicios;
 
 import dao.ProyectoDAO;
@@ -17,41 +16,32 @@ import static org.mockito.Mockito.*;
 
 class ProyectoServicioTest {
 
-    // DAO simulado para evitar acceder a MariaDB
     private ProyectoDAO proyectoDAO;
 
-    // Servicio que vamos a probar
     private ProyectoServicio proyectoServicio;
 
-    // Se ejecuta antes de cada prueba
     @BeforeEach
     void setUp() {
 
         proyectoDAO = mock(ProyectoDAO.class);
 
-        // Creamos un administrador simulado
         Usuario administrador = new Usuario(
                 "admin",
                 "hash_simulado",
                 "ADMIN"
         );
 
-        // Establecemos la sesión del administrador
         SesionUsuario.establecerUsuario(administrador);
 
-        // Inyectamos el DAO simulado
         proyectoServicio = new ProyectoServicio(proyectoDAO);
     }
 
-    // Se ejecuta después de cada prueba
     @AfterEach
     void tearDown() {
 
-        // Cerramos la sesión para evitar que afecte a otras pruebas
         SesionUsuario.cerrarSesion();
     }
 
-    // Crea un proyecto con datos válidos
     private Proyecto crearProyecto() {
 
         Proyecto proyecto = new Proyecto();
@@ -63,7 +53,6 @@ class ProyectoServicioTest {
         return proyecto;
     }
 
-    // Comprueba que no se pueda registrar un proyecto nulo
     @Test
     void registrarProyectoNulo() {
 
@@ -75,7 +64,6 @@ class ProyectoServicioTest {
         verify(proyectoDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar un proyecto sin código
     @Test
     void registrarProyectoSinCodigo() {
 
@@ -90,7 +78,6 @@ class ProyectoServicioTest {
         verify(proyectoDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar un proyecto sin nombre
     @Test
     void registrarProyectoSinNombre() {
 
@@ -105,7 +92,6 @@ class ProyectoServicioTest {
         verify(proyectoDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar un proyecto sin ciudad
     @Test
     void registrarProyectoSinCiudad() {
 
@@ -120,7 +106,6 @@ class ProyectoServicioTest {
         verify(proyectoDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar un proyecto duplicado
     @Test
     void registrarProyectoDuplicado() {
 
@@ -137,7 +122,6 @@ class ProyectoServicioTest {
         verify(proyectoDAO, never()).guardar(any());
     }
 
-    // Comprueba que se pueda registrar un proyecto correctamente
     @Test
     void registrarProyectoCorrectamente() {
 
@@ -153,7 +137,6 @@ class ProyectoServicioTest {
         verify(proyectoDAO, times(1)).guardar(proyecto);
     }
 
-    // Comprueba que se pueda buscar un proyecto por código
     @Test
     void buscarProyectoPorCodigo() {
 
@@ -171,7 +154,6 @@ class ProyectoServicioTest {
         verify(proyectoDAO, times(1)).buscarPorCodigo("PROY001");
     }
 
-    // Comprueba que se puedan buscar proyectos por nombre
     @Test
     void buscarProyectoPorNombre() {
 
@@ -189,7 +171,6 @@ class ProyectoServicioTest {
                 .buscarPorNombre("Construcción edificio");
     }
 
-    // Comprueba que se puedan buscar proyectos por ciudad
     @Test
     void buscarProyectoPorCiudad() {
 
@@ -207,7 +188,6 @@ class ProyectoServicioTest {
                 .buscarPorCiudad("Vitoria-Gasteiz");
     }
 
-    // Comprueba que se puedan listar todos los proyectos
     @Test
     void listarTodosLosProyectos() {
 
@@ -223,7 +203,6 @@ class ProyectoServicioTest {
         verify(proyectoDAO, times(1)).listarTodos();
     }
 
-    // Comprueba que no se pueda actualizar un proyecto inexistente
     @Test
     void actualizarProyectoInexistente() {
 
@@ -240,7 +219,6 @@ class ProyectoServicioTest {
         verify(proyectoDAO, never()).actualizar(any());
     }
 
-    // Comprueba que se pueda actualizar un proyecto correctamente
     @Test
     void actualizarProyectoCorrectamente() {
 
@@ -256,7 +234,6 @@ class ProyectoServicioTest {
         verify(proyectoDAO, times(1)).actualizar(proyecto);
     }
 
-    // Comprueba que no se pueda eliminar un proyecto inexistente
     @Test
     void eliminarProyectoInexistente() {
 
@@ -271,7 +248,6 @@ class ProyectoServicioTest {
         verify(proyectoDAO, never()).eliminar(anyString());
     }
 
-    // Comprueba que se pueda eliminar un proyecto correctamente
     @Test
     void eliminarProyectoCorrectamente() {
 

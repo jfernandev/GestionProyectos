@@ -1,4 +1,3 @@
-
 package menu;
 
 import modelo.Proveedor;
@@ -13,13 +12,11 @@ public class MenuProveedores {
     private final Scanner scanner;
     private final ProveedorServicio proveedorServicio;
 
-    // Constructor: recibe el Scanner y prepara el servicio
     public MenuProveedores(Scanner scanner) {
         this.scanner = scanner;
         this.proveedorServicio = new ProveedorServicio();
     }
 
-    // Inicia el submenú de proveedores
     public void iniciar() {
 
         int opcion;
@@ -71,7 +68,6 @@ public class MenuProveedores {
         } while (opcion != 8);
     }
 
-    // Muestra las opciones disponibles
     private void mostrarMenu() {
 
         System.out.println("\n========================================");
@@ -88,7 +84,6 @@ public class MenuProveedores {
         System.out.println("========================================");
     }
 
-    // Registra un proveedor nuevo
     private void registrarProveedor() {
 
         System.out.println("\n--- REGISTRAR PROVEEDOR ---");
@@ -115,7 +110,6 @@ public class MenuProveedores {
         }
     }
 
-    // Lista todos los proveedores
     private void listarProveedores() {
 
         System.out.println("\n--- LISTADO DE PROVEEDORES ---");
@@ -129,7 +123,6 @@ public class MenuProveedores {
         }
     }
 
-    // Busca un proveedor por su código
     private void buscarPorCodigo() {
 
         System.out.println("\n--- BUSCAR PROVEEDOR POR CÓDIGO ---");
@@ -150,7 +143,6 @@ public class MenuProveedores {
         }
     }
 
-    // Busca proveedores por nombre
     private void buscarPorNombre() {
 
         System.out.println("\n--- BUSCAR PROVEEDORES POR NOMBRE ---");
@@ -166,7 +158,6 @@ public class MenuProveedores {
         }
     }
 
-    // Busca proveedores por dirección
     private void buscarPorDireccion() {
 
         System.out.println("\n--- BUSCAR PROVEEDORES POR DIRECCIÓN ---");
@@ -182,7 +173,6 @@ public class MenuProveedores {
         }
     }
 
-    // Modifica los datos de un proveedor existente
     private void actualizarProveedor() {
 
         System.out.println("\n--- MODIFICAR PROVEEDOR ---");
@@ -206,7 +196,6 @@ public class MenuProveedores {
             String apellidos = Entrada.leerTexto(scanner, "Nuevos apellidos: ");
             String direccion = Entrada.leerTexto(scanner, "Nueva dirección: ");
 
-            // Conservamos el código original
             Proveedor proveedorActualizado = new Proveedor(
                     codigo,
                     nombre,
@@ -224,7 +213,6 @@ public class MenuProveedores {
         }
     }
 
-    // Elimina un proveedor por su código
     private void eliminarProveedor() {
 
         System.out.println("\n--- ELIMINAR PROVEEDOR ---");
@@ -263,7 +251,6 @@ public class MenuProveedores {
         }
     }
 
-    // Muestra los resultados de una consulta
     private void mostrarResultados(List<Proveedor> proveedores) {
 
         if (proveedores.isEmpty()) {

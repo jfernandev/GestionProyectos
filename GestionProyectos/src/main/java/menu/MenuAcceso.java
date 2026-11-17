@@ -1,4 +1,3 @@
-
 package menu;
 
 import modelo.Usuario;
@@ -12,7 +11,6 @@ public class MenuAcceso {
     private final Scanner scanner;
     private final UsuarioServicio usuarioServicio;
 
-    // Constructor: recibe el Scanner y el servicio de usuarios
     public MenuAcceso(
             Scanner scanner,
             UsuarioServicio usuarioServicio
@@ -21,7 +19,6 @@ public class MenuAcceso {
         this.usuarioServicio = usuarioServicio;
     }
 
-    // Muestra el menú de acceso y devuelve el usuario autenticado
     public Usuario mostrarMenu() {
 
         boolean salir = false;
@@ -62,7 +59,6 @@ public class MenuAcceso {
         return null;
     }
 
-    // Solicita las credenciales y comprueba el acceso
     private Usuario iniciarSesion() {
 
         System.out.println("\n===== INICIAR SESIÓN =====");
@@ -92,7 +88,6 @@ public class MenuAcceso {
         }
     }
 
-    // Permite crear el primer administrador
     private void crearAdministradorInicial() {
 
         System.out.println("\n===== CREAR ADMINISTRADOR INICIAL =====");

@@ -1,4 +1,3 @@
-
 package utilidades;
 
 import modelo.Usuario;
@@ -7,18 +6,14 @@ import org.slf4j.LoggerFactory;
 
 public class SesionUsuario {
 
-    // Logger para registrar la actividad de las sesiones
     private static final Logger logger =
             LoggerFactory.getLogger(SesionUsuario.class);
 
-    // Usuario que tiene la sesión iniciada actualmente
     private static Usuario usuarioActual;
 
-    // Evitamos crear instancias de esta clase
     private SesionUsuario() {
     }
 
-    // Guarda el usuario autenticado
     public static void establecerUsuario(Usuario usuario) {
 
         if (usuario == null) {
@@ -41,24 +36,20 @@ public class SesionUsuario {
         );
     }
 
-    // Devuelve el usuario de la sesión actual
     public static Usuario obtenerUsuarioActual() {
         return usuarioActual;
     }
 
-    // Comprueba si hay algún usuario autenticado
     public static boolean haySesionIniciada() {
         return usuarioActual != null;
     }
 
-    // Comprueba si el usuario actual es administrador
     public static boolean esAdministrador() {
 
         return usuarioActual != null
                 && "ADMIN".equals(usuarioActual.getRol());
     }
 
-    // Impide ejecutar operaciones si no hay un administrador autenticado
     public static void exigirAdministrador() {
 
         if (!esAdministrador()) {
@@ -75,7 +66,6 @@ public class SesionUsuario {
         }
     }
 
-    // Cierra la sesión actual
     public static void cerrarSesion() {
 
         if (usuarioActual != null) {

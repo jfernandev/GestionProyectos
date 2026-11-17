@@ -1,9 +1,8 @@
-
 package menu;
 
 import modelo.Usuario;
-import utilidades.Entrada;
 import servicios.GestionServicio;
+import utilidades.Entrada;
 
 import java.util.Scanner;
 
@@ -12,13 +11,11 @@ public class MenuPrincipal {
     private final Scanner scanner;
     private final Usuario usuario;
 
-    // Constructor: recibe el Scanner y el usuario autenticado
     public MenuPrincipal(Scanner scanner, Usuario usuario) {
         this.scanner = scanner;
         this.usuario = usuario;
     }
 
-    // Inicia el menú principal
     public void iniciar() {
 
         int opcion;
@@ -40,7 +37,6 @@ public class MenuPrincipal {
         } while (esAdministrador() ? opcion != 6 : opcion != 2);
     }
 
-    // Procesa las opciones del administrador
     private void procesarOpcionAdministrador(int opcion) {
 
         switch (opcion) {
@@ -75,7 +71,6 @@ public class MenuPrincipal {
         }
     }
 
-    // Procesa las opciones del usuario normal
     private void procesarOpcionUsuario(int opcion) {
 
         switch (opcion) {
@@ -94,7 +89,6 @@ public class MenuPrincipal {
         }
     }
 
-    // Abre el menú de estadísticas
     private void mostrarEstadisticas() {
 
         MenuEstadisticas menuEstadisticas =
@@ -106,12 +100,10 @@ public class MenuPrincipal {
         menuEstadisticas.mostrarMenu();
     }
 
-    // Comprueba si el usuario tiene permisos de administrador
     private boolean esAdministrador() {
         return "ADMIN".equals(usuario.getRol());
     }
 
-    // Muestra las opciones disponibles según el rol
     public void mostrarMenu() {
 
         System.out.println("\n========================================");

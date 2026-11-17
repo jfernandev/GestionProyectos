@@ -1,4 +1,3 @@
-
 package servicios;
 
 import dao.ProveedorDAO;
@@ -13,14 +12,11 @@ import java.util.List;
 
 public class ProveedorServicio {
 
-    // Logger encargado de registrar las operaciones y los errores
     private static final Logger logger =
             LoggerFactory.getLogger(ProveedorServicio.class);
 
-    // DAO encargado de comunicarse con la base de datos
     private final ProveedorDAO proveedorDAO;
 
-    // Constructor que inicializa el DAO
     public ProveedorServicio() {
         this.proveedorDAO = new ProveedorDAOImpl();
     }
@@ -30,16 +26,13 @@ public class ProveedorServicio {
         this.proveedorDAO = proveedorDAO;
     }
 
-    // Registra un proveedor después de validar sus datos
     public void registrar(Proveedor proveedor) {
 
-        // Solo los administradores pueden registrar proveedores
         SesionUsuario.exigirAdministrador();
 
         try {
             validarProveedor(proveedor);
 
-            // Comprobamos que no exista otro proveedor con el mismo código
             if (proveedorDAO.buscarPorCodigo(proveedor.getCodigo()) != null) {
                 throw new IllegalArgumentException(
                         "Ya existe un proveedor con ese código."
@@ -57,7 +50,6 @@ public class ProveedorServicio {
         }
     }
 
-    // Busca un proveedor por su código
     public Proveedor buscarPorCodigo(String codigo) {
 
         try {
@@ -75,7 +67,6 @@ public class ProveedorServicio {
         }
     }
 
-    // Busca proveedores por nombre
     public List<Proveedor> buscarPorNombre(String nombre) {
 
         try {
@@ -95,7 +86,6 @@ public class ProveedorServicio {
         }
     }
 
-    // Busca proveedores por dirección
     public List<Proveedor> buscarPorDireccion(String direccion) {
 
         try {
@@ -115,7 +105,6 @@ public class ProveedorServicio {
         }
     }
 
-    // Devuelve todos los proveedores
     public List<Proveedor> listarTodos() {
 
         try {
@@ -132,16 +121,13 @@ public class ProveedorServicio {
         }
     }
 
-    // Actualiza un proveedor existente
     public void actualizar(Proveedor proveedor) {
 
-        // Solo los administradores pueden actualizar proveedores
         SesionUsuario.exigirAdministrador();
 
         try {
             validarProveedor(proveedor);
 
-            // Comprobamos que el proveedor existe
             if (proveedorDAO.buscarPorCodigo(proveedor.getCodigo()) == null) {
                 throw new IllegalArgumentException(
                         "No existe ningún proveedor con ese código."
@@ -159,16 +145,13 @@ public class ProveedorServicio {
         }
     }
 
-    // Elimina un proveedor por su código
     public void eliminar(String codigo) {
 
-        // Solo los administradores pueden eliminar proveedores
         SesionUsuario.exigirAdministrador();
 
         try {
             validarTexto(codigo, "El código");
 
-            // Comprobamos que el proveedor existe
             if (proveedorDAO.buscarPorCodigo(codigo.trim()) == null) {
                 throw new IllegalArgumentException(
                         "No existe ningún proveedor con ese código."
@@ -186,7 +169,6 @@ public class ProveedorServicio {
         }
     }
 
-    // Comprueba que todos los datos obligatorios del proveedor sean correctos
     private void validarProveedor(Proveedor proveedor) {
 
         if (proveedor == null) {
@@ -201,7 +183,6 @@ public class ProveedorServicio {
         validarCampo(proveedor.getDireccion(), "La dirección", 200);
     }
 
-    // Valida un campo obligatorio y su longitud máxima
     private void validarCampo(String valor, String campo, int longitudMaxima) {
 
         if (valor == null || valor.trim().isEmpty()) {
@@ -218,7 +199,6 @@ public class ProveedorServicio {
         }
     }
 
-    // Valida que un texto de búsqueda no esté vacío
     private void validarTexto(String valor, String campo) {
 
         if (valor == null || valor.trim().isEmpty()) {

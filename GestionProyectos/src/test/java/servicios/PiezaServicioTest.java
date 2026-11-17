@@ -1,4 +1,3 @@
-
 package servicios;
 
 import dao.PiezaDAO;
@@ -18,41 +17,32 @@ import static org.mockito.Mockito.*;
 
 class PiezaServicioTest {
 
-    // DAO simulado para evitar acceder a MariaDB
     private PiezaDAO piezaDAO;
 
-    // Servicio que vamos a probar
     private PiezaServicio piezaServicio;
 
-    // Se ejecuta antes de cada prueba
     @BeforeEach
     void setUp() {
 
         piezaDAO = mock(PiezaDAO.class);
 
-        // Creamos un administrador simulado
         Usuario administrador = new Usuario(
                 "admin",
                 "hash_simulado",
                 "ADMIN"
         );
 
-        // Establecemos la sesión del administrador
         SesionUsuario.establecerUsuario(administrador);
 
-        // Inyectamos el DAO simulado
         piezaServicio = new PiezaServicio(piezaDAO);
     }
 
-    // Se ejecuta después de cada prueba
     @AfterEach
     void tearDown() {
 
-        // Cerramos la sesión para evitar que afecte a otras pruebas
         SesionUsuario.cerrarSesion();
     }
 
-    // Crea una pieza con datos válidos
     private Pieza crearPieza() {
 
         Pieza pieza = new Pieza();
@@ -65,7 +55,6 @@ class PiezaServicioTest {
         return pieza;
     }
 
-    // Comprueba que no se pueda registrar una pieza nula
     @Test
     void registrarPiezaNula() {
 
@@ -77,7 +66,6 @@ class PiezaServicioTest {
         verify(piezaDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar una pieza sin código
     @Test
     void registrarPiezaSinCodigo() {
 
@@ -92,7 +80,6 @@ class PiezaServicioTest {
         verify(piezaDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar una pieza sin precio
     @Test
     void registrarPiezaSinPrecio() {
 
@@ -107,7 +94,6 @@ class PiezaServicioTest {
         verify(piezaDAO, never()).guardar(any());
     }
 
-    // Comprueba que el precio de una pieza no pueda ser cero
     @Test
     void registrarPiezaConPrecioCero() {
 
@@ -122,7 +108,6 @@ class PiezaServicioTest {
         verify(piezaDAO, never()).guardar(any());
     }
 
-    // Comprueba que el precio de una pieza no pueda ser negativo
     @Test
     void registrarPiezaConPrecioNegativo() {
 
@@ -137,7 +122,6 @@ class PiezaServicioTest {
         verify(piezaDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar una pieza duplicada
     @Test
     void registrarPiezaDuplicada() {
 
@@ -154,7 +138,6 @@ class PiezaServicioTest {
         verify(piezaDAO, never()).guardar(any());
     }
 
-    // Comprueba que se pueda registrar una pieza correctamente
     @Test
     void registrarPiezaCorrectamente() {
 
@@ -170,7 +153,6 @@ class PiezaServicioTest {
         verify(piezaDAO, times(1)).guardar(pieza);
     }
 
-    // Comprueba que se pueda registrar una pieza sin descripción
     @Test
     void registrarPiezaSinDescripcion() {
 
@@ -187,7 +169,6 @@ class PiezaServicioTest {
         verify(piezaDAO, times(1)).guardar(pieza);
     }
 
-    // Comprueba que se rechace una descripción demasiado larga
     @Test
     void registrarPiezaConDescripcionDemasiadoLarga() {
 
@@ -202,7 +183,6 @@ class PiezaServicioTest {
         verify(piezaDAO, never()).guardar(any());
     }
 
-    // Comprueba que se pueda buscar una pieza por código
     @Test
     void buscarPiezaPorCodigo() {
 
@@ -219,7 +199,6 @@ class PiezaServicioTest {
         verify(piezaDAO, times(1)).buscarPorCodigo("PIEZA001");
     }
 
-    // Comprueba que se puedan listar todas las piezas
     @Test
     void listarTodasLasPiezas() {
 

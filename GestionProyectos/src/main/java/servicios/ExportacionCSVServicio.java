@@ -1,4 +1,3 @@
-
 package servicios;
 
 import modelo.Gestion;
@@ -13,12 +12,10 @@ public class ExportacionCSVServicio {
 
     private final GestionServicio gestionServicio;
 
-    // Recibimos el servicio de gestiones mediante el constructor
     public ExportacionCSVServicio(GestionServicio gestionServicio) {
         this.gestionServicio = gestionServicio;
     }
 
-    // Exporta todos los archivos CSV disponibles
     public List<Path> exportarTodo() {
 
         List<Path> archivos = new ArrayList<>();
@@ -32,7 +29,6 @@ public class ExportacionCSVServicio {
         return archivos;
     }
 
-    // Exporta todas las gestiones registradas
     public Path exportarGestiones() {
 
         List<String[]> filas = new ArrayList<>();
@@ -71,7 +67,6 @@ public class ExportacionCSVServicio {
         );
     }
 
-    // Exporta la cantidad total suministrada
     public Path exportarCantidadTotal() {
 
         Long cantidad = gestionServicio.calcularCantidadTotalSuministrada();
@@ -89,7 +84,6 @@ public class ExportacionCSVServicio {
         );
     }
 
-    // Exporta los proveedores ordenados por actividad
     public Path exportarProveedoresMasActivos() {
 
         List<Object[]> resultados =
@@ -117,7 +111,6 @@ public class ExportacionCSVServicio {
         );
     }
 
-    // Exporta las piezas ordenadas por cantidad utilizada
     public Path exportarPiezasMasUtilizadas() {
 
         List<Object[]> resultados =
@@ -145,7 +138,6 @@ public class ExportacionCSVServicio {
         );
     }
 
-    // Exporta los costes totales agrupados por proyecto
     public Path exportarCostesPorProyecto() {
 
         List<Object[]> resultados =

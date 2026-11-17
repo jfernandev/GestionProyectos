@@ -1,4 +1,3 @@
-
 package dao;
 
 import modelo.Gestion;
@@ -20,7 +19,6 @@ public interface GestionDAO {
 
     List<Gestion> buscarPorProyecto(String codigoProyecto);
 
-    // Búsqueda avanzada con filtros opcionales
     List<Gestion> buscarAvanzado(
             String codigoProveedor,
             String codigoPieza,
@@ -31,16 +29,12 @@ public interface GestionDAO {
             Integer cantidadMaxima
     );
 
-    // Calcula el coste total agrupado por proyecto
     List<Object[]> calcularCostesPorProyecto();
 
-    // Calcula la cantidad total de unidades suministradas
     Long calcularCantidadTotalSuministrada();
 
-    // Devuelve los proveedores ordenados por cantidad suministrada
     List<Object[]> obtenerProveedoresMasActivos();
 
-    // Devuelve las piezas ordenadas por cantidad utilizada
     List<Object[]> obtenerPiezasMasUtilizadas();
 
     void actualizar(Gestion gestion);

@@ -1,9 +1,8 @@
-
 package menu;
 
 import modelo.Gestion;
-import servicios.GestionServicio;
 import servicios.ExportacionCSVServicio;
+import servicios.GestionServicio;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
@@ -18,7 +17,6 @@ public class MenuEstadisticas {
     private final GestionServicio gestionServicio;
     private final ExportacionCSVServicio exportacionServicio;
 
-    // Constructor: recibe el Scanner y el servicio de gestiones
     public MenuEstadisticas(
             Scanner scanner,
             GestionServicio gestionServicio
@@ -30,7 +28,6 @@ public class MenuEstadisticas {
                 new ExportacionCSVServicio(gestionServicio);
     }
 
-    // Muestra el menú de estadísticas
     public void mostrarMenu() {
 
         int opcion;
@@ -86,7 +83,6 @@ public class MenuEstadisticas {
         }
     }
 
-    // Muestra la cantidad total suministrada
     private void mostrarCantidadTotal() {
 
         Long cantidad =
@@ -95,7 +91,6 @@ public class MenuEstadisticas {
         System.out.println("\nCantidad total suministrada: " + cantidad);
     }
 
-    // Muestra los proveedores ordenados por cantidad suministrada
     private void mostrarProveedoresMasActivos() {
 
         List<Object[]> resultados =
@@ -118,7 +113,6 @@ public class MenuEstadisticas {
         }
     }
 
-    // Muestra las piezas ordenadas por cantidad utilizada
     private void mostrarPiezasMasUtilizadas() {
 
         List<Object[]> resultados =
@@ -141,7 +135,6 @@ public class MenuEstadisticas {
         }
     }
 
-    // Muestra los costes totales agrupados por proyecto
     private void mostrarCostesPorProyecto() {
 
         List<Object[]> resultados =
@@ -184,7 +177,6 @@ public class MenuEstadisticas {
         );
     }
 
-    // Exporta todos los datos a archivos CSV
     private void exportarDatos() {
 
         System.out.println("\n===== EXPORTACIÓN CSV =====");

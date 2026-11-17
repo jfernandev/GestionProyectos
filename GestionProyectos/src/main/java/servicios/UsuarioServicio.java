@@ -1,4 +1,3 @@
-
 package servicios;
 
 import dao.UsuarioDAO;
@@ -10,23 +9,19 @@ import org.slf4j.LoggerFactory;
 
 public class UsuarioServicio {
 
-    // Logger para registrar los acontecimientos relacionados con la seguridad
     private static final Logger logger =
             LoggerFactory.getLogger(UsuarioServicio.class);
 
     private final UsuarioDAO usuarioDAO;
 
-    // Constructor para utilizar el DAO real
     public UsuarioServicio() {
         this.usuarioDAO = new UsuarioDAOImpl();
     }
 
-    // Constructor alternativo para las pruebas con Mockito
     public UsuarioServicio(UsuarioDAO usuarioDAO) {
         this.usuarioDAO = usuarioDAO;
     }
 
-    // Crea el primer administrador de la aplicación
     public void crearAdministradorInicial(
             String nombreUsuario,
             String contrasena
@@ -46,7 +41,6 @@ public class UsuarioServicio {
         logger.info("Se ha creado el administrador inicial: {}", nombreUsuario);
     }
 
-    // Registra un usuario normal
     public void registrarUsuario(
             String nombreUsuario,
             String contrasena
@@ -57,7 +51,6 @@ public class UsuarioServicio {
         logger.info("Se ha registrado un nuevo usuario: {}", nombreUsuario);
     }
 
-    // Centraliza las validaciones y el registro de usuarios
     private void registrar(
             String nombreUsuario,
             String contrasena,
@@ -82,7 +75,6 @@ public class UsuarioServicio {
             );
         }
 
-        // Generamos el hash BCrypt de la contraseña
         String contrasenaHash = BCrypt.hashpw(
                 contrasena,
                 BCrypt.gensalt(12)
@@ -97,7 +89,6 @@ public class UsuarioServicio {
         usuarioDAO.guardar(usuario);
     }
 
-    // Comprueba las credenciales de acceso
     public Usuario iniciarSesion(
             String nombreUsuario,
             String contrasena
@@ -138,7 +129,6 @@ public class UsuarioServicio {
             );
         }
 
-        // Comprobamos la contraseña contra el hash almacenado
         if (!BCrypt.checkpw(
                 contrasena,
                 usuario.getContrasenaHash()

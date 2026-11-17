@@ -1,4 +1,3 @@
-
 package dao;
 
 import modelo.Proyecto;
@@ -17,18 +16,14 @@ public class ProyectoDAOImpl implements ProyectoDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Guardamos el proyecto
             session.persist(proyecto);
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Deshacemos los cambios si ocurre algún error
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
@@ -42,7 +37,6 @@ public class ProyectoDAOImpl implements ProyectoDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Buscamos el proyecto mediante su clave primaria
             return session.find(Proyecto.class, codigo);
 
         } catch (Exception e) {
@@ -55,7 +49,6 @@ public class ProyectoDAOImpl implements ProyectoDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Buscamos proyectos cuyo nombre contenga el texto indicado
             return session.createQuery(
                             "FROM Proyecto p WHERE LOWER(p.nombre) LIKE LOWER(:nombre)",
                             Proyecto.class
@@ -73,7 +66,6 @@ public class ProyectoDAOImpl implements ProyectoDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Buscamos proyectos cuya ciudad contenga el texto indicado
             return session.createQuery(
                             "FROM Proyecto p WHERE LOWER(p.ciudad) LIKE LOWER(:ciudad)",
                             Proyecto.class
@@ -91,7 +83,6 @@ public class ProyectoDAOImpl implements ProyectoDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Recuperamos todos los proyectos ordenados por código
             return session.createQuery(
                     "FROM Proyecto p ORDER BY p.codigo",
                     Proyecto.class
@@ -109,18 +100,14 @@ public class ProyectoDAOImpl implements ProyectoDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Actualizamos el proyecto
             session.merge(proyecto);
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Deshacemos los cambios si ocurre algún error
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
@@ -136,25 +123,20 @@ public class ProyectoDAOImpl implements ProyectoDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Buscamos el proyecto que queremos eliminar
             Proyecto proyecto = session.find(Proyecto.class, codigo);
 
             if (proyecto == null) {
                 throw new RuntimeException("No existe ningún proyecto con ese código.");
             }
 
-            // Eliminamos el proyecto
             session.remove(proyecto);
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Deshacemos los cambios si ocurre algún error
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }

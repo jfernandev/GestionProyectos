@@ -1,4 +1,3 @@
-
 package servicios;
 
 import dao.ProyectoDAO;
@@ -13,14 +12,11 @@ import java.util.List;
 
 public class ProyectoServicio {
 
-    // Logger encargado de registrar las operaciones y los errores
     private static final Logger logger =
             LoggerFactory.getLogger(ProyectoServicio.class);
 
-    // DAO encargado de comunicarse con la base de datos
     private final ProyectoDAO proyectoDAO;
 
-    // Constructor que inicializa el DAO
     public ProyectoServicio() {
         this.proyectoDAO = new ProyectoDAOImpl();
     }
@@ -30,16 +26,13 @@ public class ProyectoServicio {
         this.proyectoDAO = proyectoDAO;
     }
 
-    // Registra un proyecto después de validar sus datos
     public void registrar(Proyecto proyecto) {
 
-        // Solo los administradores pueden registrar proyectos
         SesionUsuario.exigirAdministrador();
 
         try {
             validarProyecto(proyecto);
 
-            // Comprobamos que no exista otro proyecto con el mismo código
             if (proyectoDAO.buscarPorCodigo(proyecto.getCodigo()) != null) {
                 throw new IllegalArgumentException(
                         "Ya existe un proyecto con ese código."
@@ -57,7 +50,6 @@ public class ProyectoServicio {
         }
     }
 
-    // Busca un proyecto por su código
     public Proyecto buscarPorCodigo(String codigo) {
 
         try {
@@ -76,7 +68,6 @@ public class ProyectoServicio {
         }
     }
 
-    // Busca proyectos por su nombre
     public List<Proyecto> buscarPorNombre(String nombre) {
 
         try {
@@ -96,7 +87,6 @@ public class ProyectoServicio {
         }
     }
 
-    // Busca proyectos por ciudad
     public List<Proyecto> buscarPorCiudad(String ciudad) {
 
         try {
@@ -116,7 +106,6 @@ public class ProyectoServicio {
         }
     }
 
-    // Devuelve todos los proyectos registrados
     public List<Proyecto> listarTodos() {
 
         try {
@@ -133,16 +122,13 @@ public class ProyectoServicio {
         }
     }
 
-    // Actualiza un proyecto existente
     public void actualizar(Proyecto proyecto) {
 
-        // Solo los administradores pueden actualizar proyectos
         SesionUsuario.exigirAdministrador();
 
         try {
             validarProyecto(proyecto);
 
-            // Comprobamos que el proyecto exista
             if (proyectoDAO.buscarPorCodigo(proyecto.getCodigo()) == null) {
                 throw new IllegalArgumentException(
                         "No existe ningún proyecto con ese código."
@@ -160,16 +146,13 @@ public class ProyectoServicio {
         }
     }
 
-    // Elimina un proyecto por su código
     public void eliminar(String codigo) {
 
-        // Solo los administradores pueden eliminar proyectos
         SesionUsuario.exigirAdministrador();
 
         try {
             validarTexto(codigo, "El código");
 
-            // Comprobamos que el proyecto exista
             if (proyectoDAO.buscarPorCodigo(codigo.trim()) == null) {
                 throw new IllegalArgumentException(
                         "No existe ningún proyecto con ese código."
@@ -187,7 +170,6 @@ public class ProyectoServicio {
         }
     }
 
-    // Valida todos los campos obligatorios del proyecto
     private void validarProyecto(Proyecto proyecto) {
 
         if (proyecto == null) {
@@ -201,7 +183,6 @@ public class ProyectoServicio {
         validarCampo(proyecto.getCiudad(), "La ciudad", 100);
     }
 
-    // Valida un campo obligatorio y su longitud máxima
     private void validarCampo(String valor, String campo, int longitudMaxima) {
 
         if (valor == null || valor.trim().isEmpty()) {
@@ -218,7 +199,6 @@ public class ProyectoServicio {
         }
     }
 
-    // Comprueba que un texto de búsqueda no esté vacío
     private void validarTexto(String valor, String campo) {
 
         if (valor == null || valor.trim().isEmpty()) {

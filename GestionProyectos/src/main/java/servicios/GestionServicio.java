@@ -1,12 +1,11 @@
-
 package servicios;
 
 import dao.GestionDAO;
 import dao.GestionDAOImpl;
-import dao.ProveedorDAO;
-import dao.ProveedorDAOImpl;
 import dao.PiezaDAO;
 import dao.PiezaDAOImpl;
+import dao.ProveedorDAO;
+import dao.ProveedorDAOImpl;
 import dao.ProyectoDAO;
 import dao.ProyectoDAOImpl;
 
@@ -29,7 +28,6 @@ public class GestionServicio {
     private final PiezaDAO piezaDAO;
     private final ProyectoDAO proyectoDAO;
 
-    // Constructor que utiliza los DAO predeterminados
     public GestionServicio() {
         this(
                 new GestionDAOImpl(),
@@ -52,10 +50,8 @@ public class GestionServicio {
         this.proyectoDAO = proyectoDAO;
     }
 
-    // Registra una nueva gestión
     public void registrar(Gestion gestion) {
 
-        // Solo los administradores pueden registrar gestiones
         SesionUsuario.exigirAdministrador();
 
         logger.info("Iniciando registro de gestión.");
@@ -111,7 +107,6 @@ public class GestionServicio {
         }
     }
 
-    // Busca una gestión por su identificador
     public Gestion buscarPorId(Long id) {
 
         logger.info("Buscando gestión con identificador: {}", id);
@@ -130,7 +125,6 @@ public class GestionServicio {
         }
     }
 
-    // Devuelve todas las gestiones
     public List<Gestion> listarTodas() {
 
         logger.info("Listando todas las gestiones.");
@@ -143,7 +137,6 @@ public class GestionServicio {
         }
     }
 
-    // Busca gestiones por proveedor
     public List<Gestion> buscarPorProveedor(String codigoProveedor) {
 
         logger.info("Buscando gestiones del proveedor: {}", codigoProveedor);
@@ -162,7 +155,6 @@ public class GestionServicio {
         }
     }
 
-    // Busca gestiones por pieza
     public List<Gestion> buscarPorPieza(String codigoPieza) {
 
         logger.info("Buscando gestiones de la pieza: {}", codigoPieza);
@@ -181,7 +173,6 @@ public class GestionServicio {
         }
     }
 
-    // Busca gestiones por proyecto
     public List<Gestion> buscarPorProyecto(String codigoProyecto) {
 
         logger.info("Buscando gestiones del proyecto: {}", codigoProyecto);
@@ -200,7 +191,6 @@ public class GestionServicio {
         }
     }
 
-    // Búsqueda avanzada con filtros opcionales
     public List<Gestion> buscarAvanzado(
             String codigoProveedor,
             String codigoPieza,
@@ -267,7 +257,6 @@ public class GestionServicio {
         }
     }
 
-    // Calcula el coste total de los suministros agrupados por proyecto
     public List<Object[]> calcularCostesPorProyecto() {
 
         logger.info("Calculando costes de los proyectos.");
@@ -290,7 +279,6 @@ public class GestionServicio {
         }
     }
 
-    // Calcula la cantidad total de unidades suministradas
     public Long calcularCantidadTotalSuministrada() {
 
         logger.info("Calculando cantidad total suministrada.");
@@ -310,7 +298,6 @@ public class GestionServicio {
         }
     }
 
-    // Obtiene los proveedores ordenados por cantidad suministrada
     public List<Object[]> obtenerProveedoresMasActivos() {
 
         logger.info("Consultando proveedores más activos.");
@@ -330,7 +317,6 @@ public class GestionServicio {
         }
     }
 
-    // Obtiene las piezas ordenadas por cantidad utilizada
     public List<Object[]> obtenerPiezasMasUtilizadas() {
 
         logger.info("Consultando piezas más utilizadas.");
@@ -350,10 +336,8 @@ public class GestionServicio {
         }
     }
 
-    // Actualiza una gestión existente
     public void actualizar(Gestion gestion) {
 
-        // Solo los administradores pueden actualizar gestiones
         SesionUsuario.exigirAdministrador();
 
         logger.info("Iniciando actualización de gestión.");
@@ -421,10 +405,8 @@ public class GestionServicio {
         }
     }
 
-    // Elimina una gestión por su identificador
     public void eliminar(Long id) {
 
-        // Solo los administradores pueden eliminar gestiones
         SesionUsuario.exigirAdministrador();
 
         logger.info("Iniciando eliminación de gestión: {}", id);

@@ -1,4 +1,3 @@
-
 import menu.MenuAcceso;
 import menu.MenuPrincipal;
 import modelo.Usuario;
@@ -13,7 +12,6 @@ import java.util.Scanner;
 
 public class App {
 
-    // Logger para registrar el inicio y cierre de la aplicación
     private static final Logger logger =
             LoggerFactory.getLogger(App.class);
 
@@ -22,10 +20,8 @@ public class App {
         Scanner scanner = new Scanner(System.in);
 
         try {
-            // Creamos el servicio de autenticación
             UsuarioServicio usuarioServicio = new UsuarioServicio();
 
-            // Mostramos el menú de acceso
             MenuAcceso menuAcceso = new MenuAcceso(
                     scanner,
                     usuarioServicio
@@ -35,7 +31,6 @@ public class App {
 
             if (usuario != null) {
 
-                // Guardamos el usuario autenticado en la sesión
                 SesionUsuario.establecerUsuario(usuario);
 
                 logger.info(
@@ -48,7 +43,6 @@ public class App {
                                 + usuario.getNombreUsuario()
                 );
 
-                // Abrimos el menú principal
                 MenuPrincipal menuPrincipal =
                         new MenuPrincipal(scanner, usuario);
 
@@ -71,10 +65,8 @@ public class App {
 
         } finally {
 
-            // Cerramos la sesión
             SesionUsuario.cerrarSesion();
 
-            // Cerramos Hibernate y el Scanner
             HibernateUtil.cerrar();
             scanner.close();
 

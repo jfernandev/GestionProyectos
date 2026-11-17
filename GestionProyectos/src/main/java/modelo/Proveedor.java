@@ -13,32 +13,26 @@ import java.util.List;
 @Table(name = "proveedores")
 public class Proveedor {
 
-    // Código alfanumérico que identifica al proveedor
     @Id
     @Column(name = "codigo", length = 20)
     private String codigo;
 
-    // Nombre del proveedor
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    // Apellidos del proveedor
     @Column(name = "apellidos", nullable = false, length = 150)
     private String apellidos;
 
-    // Dirección postal del proveedor
     @Column(name = "direccion", nullable = false, length = 200)
     private String direccion;
 
-    // Un proveedor puede tener muchas gestiones
     @OneToMany(mappedBy = "proveedor")
     private List<Gestion> gestiones = new ArrayList<>();
 
-    // Constructor vacío requerido por Hibernate
+    // Constructor vacío requerido por Hibernate.
     public Proveedor() {
     }
 
-    // Constructor para crear proveedores desde la aplicación
     public Proveedor(String codigo, String nombre, String apellidos, String direccion) {
         this.codigo = codigo;
         this.nombre = nombre;
@@ -46,7 +40,6 @@ public class Proveedor {
         this.direccion = direccion;
     }
 
-    // Getters y setters
     public String getCodigo() {
         return codigo;
     }

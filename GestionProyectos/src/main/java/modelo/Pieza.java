@@ -14,32 +14,26 @@ import java.util.List;
 @Table(name = "piezas")
 public class Pieza {
 
-    // Código alfanumérico que identifica la pieza
     @Id
     @Column(name = "codigo", length = 20)
     private String codigo;
 
-    // Nombre de la pieza
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    // Precio de la pieza
     @Column(name = "precio", nullable = false, precision = 10, scale = 2)
     private BigDecimal precio;
 
-    // Descripción de la pieza
     @Column(name = "descripcion", length = 500)
     private String descripcion;
 
-    // Una pieza puede aparecer en muchas gestiones
     @OneToMany(mappedBy = "pieza")
     private List<Gestion> gestiones = new ArrayList<>();
 
-    // Constructor vacío requerido por Hibernate
+    // Constructor vacío requerido por Hibernate.
     public Pieza() {
     }
 
-    // Constructor para crear piezas desde la aplicación
     public Pieza(String codigo, String nombre, BigDecimal precio, String descripcion) {
         this.codigo = codigo;
         this.nombre = nombre;
@@ -47,7 +41,6 @@ public class Pieza {
         this.descripcion = descripcion;
     }
 
-    // Getters y setters
     public String getCodigo() {
         return codigo;
     }

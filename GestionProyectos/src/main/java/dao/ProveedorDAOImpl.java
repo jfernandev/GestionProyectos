@@ -1,4 +1,3 @@
-
 package dao;
 
 import modelo.Proveedor;
@@ -17,18 +16,14 @@ public class ProveedorDAOImpl implements ProveedorDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Guardamos el proveedor
             session.persist(proveedor);
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Si ocurre un error, deshacemos los cambios
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
@@ -42,7 +37,6 @@ public class ProveedorDAOImpl implements ProveedorDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Buscamos el proveedor utilizando su clave primaria
             return session.find(Proveedor.class, codigo);
 
         } catch (Exception e) {
@@ -55,7 +49,6 @@ public class ProveedorDAOImpl implements ProveedorDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Buscamos coincidencias parciales en el nombre
             return session.createQuery(
                             "FROM Proveedor p WHERE LOWER(p.nombre) LIKE LOWER(:nombre)",
                             Proveedor.class
@@ -73,7 +66,6 @@ public class ProveedorDAOImpl implements ProveedorDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Buscamos coincidencias parciales en la dirección
             return session.createQuery(
                             "FROM Proveedor p WHERE LOWER(p.direccion) LIKE LOWER(:direccion)",
                             Proveedor.class
@@ -91,7 +83,6 @@ public class ProveedorDAOImpl implements ProveedorDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Recuperamos todos los proveedores ordenados por código
             return session.createQuery(
                     "FROM Proveedor p ORDER BY p.codigo",
                     Proveedor.class
@@ -109,18 +100,14 @@ public class ProveedorDAOImpl implements ProveedorDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Actualizamos el proveedor
             session.merge(proveedor);
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Deshacemos los cambios si ocurre algún error
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
@@ -136,25 +123,20 @@ public class ProveedorDAOImpl implements ProveedorDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Buscamos el proveedor que queremos eliminar
             Proveedor proveedor = session.find(Proveedor.class, codigo);
 
             if (proveedor == null) {
                 throw new RuntimeException("No existe ningún proveedor con ese código.");
             }
 
-            // Eliminamos el proveedor
             session.remove(proveedor);
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Deshacemos los cambios si ocurre algún error
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }

@@ -1,10 +1,9 @@
-
 package menu;
 
 import modelo.Gestion;
-import modelo.Proveedor;
 import modelo.Pieza;
 import modelo.Proyecto;
+import modelo.Proveedor;
 import servicios.GestionServicio;
 import utilidades.Entrada;
 
@@ -25,7 +24,6 @@ public class MenuGestiones {
         this.gestionServicio = new GestionServicio();
     }
 
-    // Inicia el submenú de gestiones
     public void iniciar() {
 
         int opcion;
@@ -89,7 +87,6 @@ public class MenuGestiones {
         } while (opcion != 11);
     }
 
-    // Muestra las opciones disponibles
     private void mostrarMenu() {
 
         System.out.println("\n========================================");
@@ -109,7 +106,6 @@ public class MenuGestiones {
         System.out.println("========================================");
     }
 
-    // Registra una nueva gestión
     private void registrarGestion() {
 
         System.out.println("\n--- REGISTRAR GESTIÓN ---");
@@ -143,7 +139,6 @@ public class MenuGestiones {
         }
     }
 
-    // Lista todas las gestiones
     private void listarGestiones() {
 
         System.out.println("\n--- LISTADO DE GESTIONES ---");
@@ -157,7 +152,6 @@ public class MenuGestiones {
         }
     }
 
-    // Busca una gestión por su identificador
     private void buscarPorId() {
 
         System.out.println("\n--- BUSCAR GESTIÓN POR IDENTIFICADOR ---");
@@ -178,7 +172,6 @@ public class MenuGestiones {
         }
     }
 
-    // Busca las gestiones de un proveedor
     private void buscarPorProveedor() {
 
         System.out.println("\n--- BUSCAR GESTIONES POR PROVEEDOR ---");
@@ -194,7 +187,6 @@ public class MenuGestiones {
         }
     }
 
-    // Busca las gestiones de una pieza
     private void buscarPorPieza() {
 
         System.out.println("\n--- BUSCAR GESTIONES POR PIEZA ---");
@@ -210,7 +202,6 @@ public class MenuGestiones {
         }
     }
 
-    // Busca las gestiones de un proyecto
     private void buscarPorProyecto() {
 
         System.out.println("\n--- BUSCAR GESTIONES POR PROYECTO ---");
@@ -226,7 +217,6 @@ public class MenuGestiones {
         }
     }
 
-    // Realiza una búsqueda avanzada mediante filtros opcionales
     private void buscarAvanzado() {
 
         System.out.println("\n--- BÚSQUEDA AVANZADA DE GESTIONES ---");
@@ -263,7 +253,6 @@ public class MenuGestiones {
         }
     }
 
-    // Lee un filtro de texto permitiendo dejarlo vacío
     private String leerFiltroTexto(String mensaje) {
 
         System.out.print(mensaje);
@@ -272,7 +261,6 @@ public class MenuGestiones {
         return texto.isEmpty() ? null : texto;
     }
 
-    // Lee una fecha opcional
     private LocalDate leerFiltroFecha(String mensaje) {
 
         while (true) {
@@ -293,7 +281,6 @@ public class MenuGestiones {
         }
     }
 
-    // Lee un número entero opcional
     private Integer leerFiltroEntero(String mensaje) {
 
         while (true) {
@@ -314,7 +301,6 @@ public class MenuGestiones {
         }
     }
 
-    // Calcula y muestra los costes agrupados por proyecto
     private void analizarCostesPorProyecto() {
 
         System.out.println("\n--- ANÁLISIS DE COSTES POR PROYECTO ---");
@@ -362,7 +348,6 @@ public class MenuGestiones {
         }
     }
 
-    // Modifica una gestión existente
     private void actualizarGestion() {
 
         System.out.println("\n--- MODIFICAR GESTIÓN ---");
@@ -413,7 +398,6 @@ public class MenuGestiones {
         }
     }
 
-    // Elimina una gestión por su identificador
     private void eliminarGestion() {
 
         System.out.println("\n--- ELIMINAR GESTIÓN ---");
@@ -452,7 +436,6 @@ public class MenuGestiones {
         }
     }
 
-    // Muestra los resultados de una consulta
     private void mostrarResultados(List<Gestion> gestiones) {
 
         if (gestiones.isEmpty()) {

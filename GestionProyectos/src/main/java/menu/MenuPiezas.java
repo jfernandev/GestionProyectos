@@ -1,4 +1,3 @@
-
 package menu;
 
 import modelo.Pieza;
@@ -14,13 +13,11 @@ public class MenuPiezas {
     private final Scanner scanner;
     private final PiezaServicio piezaServicio;
 
-    // Constructor: recibe el Scanner y prepara el servicio
     public MenuPiezas(Scanner scanner) {
         this.scanner = scanner;
         this.piezaServicio = new PiezaServicio();
     }
 
-    // Inicia el submenú de piezas
     public void iniciar() {
 
         int opcion;
@@ -68,7 +65,6 @@ public class MenuPiezas {
         } while (opcion != 7);
     }
 
-    // Muestra las opciones disponibles
     private void mostrarMenu() {
 
         System.out.println("\n========================================");
@@ -84,7 +80,6 @@ public class MenuPiezas {
         System.out.println("========================================");
     }
 
-    // Registra una pieza nueva
     private void registrarPieza() {
 
         System.out.println("\n--- REGISTRAR PIEZA ---");
@@ -94,7 +89,6 @@ public class MenuPiezas {
         BigDecimal precio = Entrada.leerDecimal(scanner, "Precio: ");
         String descripcion = Entrada.leerTextoOpcional(scanner, "Descripción (opcional): ");
 
-        // Creamos la pieza con los datos introducidos
         Pieza pieza = new Pieza(
                 codigo,
                 nombre,
@@ -112,7 +106,6 @@ public class MenuPiezas {
         }
     }
 
-    // Lista todas las piezas almacenadas
     private void listarPiezas() {
 
         System.out.println("\n--- LISTADO DE PIEZAS ---");
@@ -126,7 +119,6 @@ public class MenuPiezas {
         }
     }
 
-    // Busca una pieza por su código
     private void buscarPorCodigo() {
 
         System.out.println("\n--- BUSCAR PIEZA POR CÓDIGO ---");
@@ -147,7 +139,6 @@ public class MenuPiezas {
         }
     }
 
-    // Busca piezas cuyo nombre contenga el texto introducido
     private void buscarPorNombre() {
 
         System.out.println("\n--- BUSCAR PIEZAS POR NOMBRE ---");
@@ -163,7 +154,6 @@ public class MenuPiezas {
         }
     }
 
-    // Modifica los datos de una pieza existente
     private void actualizarPieza() {
 
         System.out.println("\n--- MODIFICAR PIEZA ---");
@@ -190,7 +180,6 @@ public class MenuPiezas {
                     "Nueva descripción (opcional): "
             );
 
-            // Conservamos el código original
             Pieza piezaActualizada = new Pieza(
                     codigo,
                     nombre,
@@ -208,7 +197,6 @@ public class MenuPiezas {
         }
     }
 
-    // Elimina una pieza por su código
     private void eliminarPieza() {
 
         System.out.println("\n--- ELIMINAR PIEZA ---");
@@ -247,7 +235,6 @@ public class MenuPiezas {
         }
     }
 
-    // Muestra los resultados de una consulta
     private void mostrarResultados(List<Pieza> piezas) {
 
         if (piezas.isEmpty()) {

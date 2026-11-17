@@ -1,4 +1,3 @@
-
 package servicios;
 
 import dao.GestionDAO;
@@ -26,16 +25,13 @@ import static org.mockito.Mockito.*;
 
 class GestionServicioTest {
 
-    // DAOs simulados para no acceder a la base de datos
     private GestionDAO gestionDAO;
     private ProveedorDAO proveedorDAO;
     private PiezaDAO piezaDAO;
     private ProyectoDAO proyectoDAO;
 
-    // Servicio que vamos a probar
     private GestionServicio gestionServicio;
 
-    // Se ejecuta antes de cada prueba
     @BeforeEach
     void setUp() {
 
@@ -44,17 +40,14 @@ class GestionServicioTest {
         piezaDAO = mock(PiezaDAO.class);
         proyectoDAO = mock(ProyectoDAO.class);
 
-        // Creamos un administrador simulado
         Usuario administrador = new Usuario(
                 "admin",
                 "hash_simulado",
                 "ADMIN"
         );
 
-        // Establecemos la sesión del administrador
         SesionUsuario.establecerUsuario(administrador);
 
-        // Inyectamos los cuatro DAO simulados
         gestionServicio = new GestionServicio(
                 gestionDAO,
                 proveedorDAO,
@@ -63,15 +56,12 @@ class GestionServicioTest {
         );
     }
 
-    // Se ejecuta después de cada prueba
     @AfterEach
     void tearDown() {
 
-        // Cerramos la sesión para evitar que afecte a otras pruebas
         SesionUsuario.cerrarSesion();
     }
 
-    // Crea un proveedor válido para las pruebas
     private Proveedor crearProveedor() {
 
         Proveedor proveedor = new Proveedor();
@@ -84,7 +74,6 @@ class GestionServicioTest {
         return proveedor;
     }
 
-    // Crea una pieza válida para las pruebas
     private Pieza crearPieza() {
 
         Pieza pieza = new Pieza();
@@ -95,7 +84,6 @@ class GestionServicioTest {
         return pieza;
     }
 
-    // Crea un proyecto válido para las pruebas
     private Proyecto crearProyecto() {
 
         Proyecto proyecto = new Proyecto();
@@ -107,7 +95,6 @@ class GestionServicioTest {
         return proyecto;
     }
 
-    // Crea una gestión con todos sus datos correctos
     private Gestion crearGestion() {
 
         Gestion gestion = new Gestion();
@@ -121,7 +108,6 @@ class GestionServicioTest {
         return gestion;
     }
 
-    // Configura las respuestas de los DAO para validar las relaciones
     private void configurarRelacionesExistentes() {
 
         when(proveedorDAO.buscarPorCodigo("PROV001"))
@@ -134,7 +120,6 @@ class GestionServicioTest {
                 .thenReturn(crearProyecto());
     }
 
-    // Comprueba que no se pueda registrar una gestión nula
     @Test
     void registrarGestionNula() {
 
@@ -146,7 +131,6 @@ class GestionServicioTest {
         verify(gestionDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar una gestión sin fecha
     @Test
     void registrarGestionSinFecha() {
 
@@ -161,7 +145,6 @@ class GestionServicioTest {
         verify(gestionDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar una gestión sin cantidad
     @Test
     void registrarGestionSinCantidad() {
 
@@ -176,7 +159,6 @@ class GestionServicioTest {
         verify(gestionDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar una gestión con cantidad cero
     @Test
     void registrarGestionConCantidadCero() {
 
@@ -191,7 +173,6 @@ class GestionServicioTest {
         verify(gestionDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar una gestión con cantidad negativa
     @Test
     void registrarGestionConCantidadNegativa() {
 
@@ -206,7 +187,6 @@ class GestionServicioTest {
         verify(gestionDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar una gestión sin proveedor
     @Test
     void registrarGestionSinProveedor() {
 
@@ -221,7 +201,6 @@ class GestionServicioTest {
         verify(gestionDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar una gestión sin pieza
     @Test
     void registrarGestionSinPieza() {
 
@@ -236,7 +215,6 @@ class GestionServicioTest {
         verify(gestionDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar una gestión sin proyecto
     @Test
     void registrarGestionSinProyecto() {
 
@@ -251,7 +229,6 @@ class GestionServicioTest {
         verify(gestionDAO, never()).guardar(any());
     }
 
-    // Comprueba que no se pueda registrar una gestión con un proveedor inexistente
     @Test
     void registrarGestionConProveedorInexistente() {
 
@@ -268,7 +245,6 @@ class GestionServicioTest {
         verify(gestionDAO, never()).guardar(any());
     }
 
-    // Comprueba que se pueda registrar una gestión correctamente
     @Test
     void registrarGestionCorrectamente() {
 
@@ -283,7 +259,6 @@ class GestionServicioTest {
         verify(gestionDAO, times(1)).guardar(gestion);
     }
 
-    // Comprueba que se puedan listar todas las gestiones
     @Test
     void listarTodasLasGestiones() {
 
@@ -299,7 +274,6 @@ class GestionServicioTest {
         verify(gestionDAO, times(1)).listarTodas();
     }
 
-    // Comprueba que se pueda buscar una gestión por su identificador
     @Test
     void buscarGestionPorId() {
 
@@ -315,7 +289,6 @@ class GestionServicioTest {
         verify(gestionDAO, times(1)).buscarPorId(1L);
     }
 
-    // Comprueba que se pueda realizar una búsqueda avanzada correctamente
     @Test
     void buscarAvanzadoCorrectamente() {
 
@@ -357,7 +330,6 @@ class GestionServicioTest {
         );
     }
 
-    // Comprueba que la fecha inicial no pueda ser posterior a la final
     @Test
     void buscarAvanzadoConFechasIncorrectas() {
 
@@ -377,11 +349,9 @@ class GestionServicioTest {
                 )
         );
 
-        // Comprobamos que no se haya llamado al DAO
         verifyNoInteractions(gestionDAO);
     }
 
-    // Comprueba que la cantidad mínima no pueda superar a la máxima
     @Test
     void buscarAvanzadoConCantidadesIncorrectas() {
 
@@ -398,11 +368,9 @@ class GestionServicioTest {
                 )
         );
 
-        // Comprobamos que no se haya llamado al DAO
         verifyNoInteractions(gestionDAO);
     }
 
-    // Comprueba que la cantidad mínima no pueda ser cero o negativa
     @Test
     void buscarAvanzadoConCantidadMinimaNoValida() {
 
@@ -419,11 +387,9 @@ class GestionServicioTest {
                 )
         );
 
-        // Comprobamos que no se haya llamado al DAO
         verifyNoInteractions(gestionDAO);
     }
 
-    // Comprueba que la cantidad máxima no pueda ser cero o negativa
     @Test
     void buscarAvanzadoConCantidadMaximaNoValida() {
 
@@ -440,7 +406,6 @@ class GestionServicioTest {
                 )
         );
 
-        // Comprobamos que no se haya llamado al DAO
         verifyNoInteractions(gestionDAO);
     }
 }

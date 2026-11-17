@@ -1,4 +1,3 @@
-
 package servicios;
 
 import dao.PiezaDAO;
@@ -14,14 +13,11 @@ import java.util.List;
 
 public class PiezaServicio {
 
-    // Logger encargado de registrar las operaciones y los errores
     private static final Logger logger =
             LoggerFactory.getLogger(PiezaServicio.class);
 
-    // DAO encargado de comunicarse con la base de datos
     private final PiezaDAO piezaDAO;
 
-    // Constructor que inicializa el DAO
     public PiezaServicio() {
         this.piezaDAO = new PiezaDAOImpl();
     }
@@ -31,16 +27,13 @@ public class PiezaServicio {
         this.piezaDAO = piezaDAO;
     }
 
-    // Registra una pieza después de validar sus datos
     public void registrar(Pieza pieza) {
 
-        // Solo los administradores pueden registrar piezas
         SesionUsuario.exigirAdministrador();
 
         try {
             validarPieza(pieza);
 
-            // Comprobamos que no exista otra pieza con el mismo código
             if (piezaDAO.buscarPorCodigo(pieza.getCodigo()) != null) {
                 throw new IllegalArgumentException(
                         "Ya existe una pieza con ese código."
@@ -58,7 +51,6 @@ public class PiezaServicio {
         }
     }
 
-    // Busca una pieza por su código
     public Pieza buscarPorCodigo(String codigo) {
 
         try {
@@ -76,7 +68,6 @@ public class PiezaServicio {
         }
     }
 
-    // Busca piezas por su nombre
     public List<Pieza> buscarPorNombre(String nombre) {
 
         try {
@@ -95,7 +86,6 @@ public class PiezaServicio {
         }
     }
 
-    // Devuelve todas las piezas registradas
     public List<Pieza> listarTodas() {
 
         try {
@@ -112,16 +102,13 @@ public class PiezaServicio {
         }
     }
 
-    // Actualiza una pieza existente
     public void actualizar(Pieza pieza) {
 
-        // Solo los administradores pueden actualizar piezas
         SesionUsuario.exigirAdministrador();
 
         try {
             validarPieza(pieza);
 
-            // Comprobamos que la pieza exista
             if (piezaDAO.buscarPorCodigo(pieza.getCodigo()) == null) {
                 throw new IllegalArgumentException(
                         "No existe ninguna pieza con ese código."
@@ -139,16 +126,13 @@ public class PiezaServicio {
         }
     }
 
-    // Elimina una pieza por su código
     public void eliminar(String codigo) {
 
-        // Solo los administradores pueden eliminar piezas
         SesionUsuario.exigirAdministrador();
 
         try {
             validarTexto(codigo, "El código");
 
-            // Comprobamos que la pieza exista
             if (piezaDAO.buscarPorCodigo(codigo.trim()) == null) {
                 throw new IllegalArgumentException(
                         "No existe ninguna pieza con ese código."
@@ -166,7 +150,6 @@ public class PiezaServicio {
         }
     }
 
-    // Valida todos los campos de una pieza
     private void validarPieza(Pieza pieza) {
 
         if (pieza == null) {
@@ -178,7 +161,6 @@ public class PiezaServicio {
         validarCampo(pieza.getCodigo(), "El código", 20);
         validarCampo(pieza.getNombre(), "El nombre", 100);
 
-        // La descripción es opcional, pero tiene una longitud máxima
         if (pieza.getDescripcion() != null &&
                 pieza.getDescripcion().length() > 500) {
 
@@ -187,7 +169,6 @@ public class PiezaServicio {
             );
         }
 
-        // El precio debe ser obligatorio y positivo
         BigDecimal precio = pieza.getPrecio();
 
         if (precio == null || precio.compareTo(BigDecimal.ZERO) <= 0) {
@@ -197,7 +178,6 @@ public class PiezaServicio {
         }
     }
 
-    // Valida un campo obligatorio y su longitud máxima
     private void validarCampo(String valor, String campo, int longitudMaxima) {
 
         if (valor == null || valor.trim().isEmpty()) {
@@ -214,7 +194,6 @@ public class PiezaServicio {
         }
     }
 
-    // Comprueba que un texto de búsqueda no esté vacío
     private void validarTexto(String valor, String campo) {
 
         if (valor == null || valor.trim().isEmpty()) {

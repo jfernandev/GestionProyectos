@@ -1,4 +1,3 @@
-
 package menu;
 
 import modelo.Proyecto;
@@ -18,7 +17,6 @@ public class MenuProyectos {
         this.proyectoServicio = new ProyectoServicio();
     }
 
-    // Muestra el menú y gestiona las opciones seleccionadas
     public void iniciar() {
         int opcion;
 
@@ -63,7 +61,6 @@ public class MenuProyectos {
         } while (opcion != 8);
     }
 
-    // Muestra las operaciones disponibles para los proyectos
     private void mostrarMenu() {
         System.out.println("\n========================================");
         System.out.println("          MENÚ DE PROYECTOS");
@@ -79,7 +76,6 @@ public class MenuProyectos {
         System.out.println("========================================");
     }
 
-    // Registra un proyecto nuevo
     private void registrarProyecto() {
         System.out.println("\n--- REGISTRAR PROYECTO ---");
 
@@ -94,7 +90,6 @@ public class MenuProyectos {
         System.out.println("\nProyecto registrado correctamente.");
     }
 
-    // Muestra todos los proyectos almacenados
     private void listarProyectos() {
         System.out.println("\n--- LISTADO DE PROYECTOS ---");
 
@@ -110,7 +105,6 @@ public class MenuProyectos {
         }
     }
 
-    // Busca un proyecto utilizando su código
     private void buscarPorCodigo() {
         System.out.println("\n--- BUSCAR PROYECTO POR CÓDIGO ---");
 
@@ -125,7 +119,6 @@ public class MenuProyectos {
         }
     }
 
-    // Busca proyectos cuyo nombre contenga el texto indicado
     private void buscarPorNombre() {
         System.out.println("\n--- BUSCAR PROYECTOS POR NOMBRE ---");
 
@@ -136,7 +129,6 @@ public class MenuProyectos {
         mostrarResultados(proyectos);
     }
 
-    // Busca proyectos cuya ciudad contenga el texto indicado
     private void buscarPorCiudad() {
         System.out.println("\n--- BUSCAR PROYECTOS POR CIUDAD ---");
 
@@ -147,7 +139,6 @@ public class MenuProyectos {
         mostrarResultados(proyectos);
     }
 
-    // Muestra los resultados de una búsqueda
     private void mostrarResultados(List<Proyecto> proyectos) {
         if (proyectos.isEmpty()) {
             System.out.println("No se han encontrado proyectos.");
@@ -159,7 +150,6 @@ public class MenuProyectos {
         }
     }
 
-    // Modifica los datos de un proyecto existente
     private void actualizarProyecto() {
         System.out.println("\n--- MODIFICAR PROYECTO ---");
 
@@ -184,7 +174,6 @@ public class MenuProyectos {
         System.out.println("\nProyecto actualizado correctamente.");
     }
 
-    // Elimina un proyecto si no tiene gestiones asociadas
     private void eliminarProyecto() {
         System.out.println("\n--- ELIMINAR PROYECTO ---");
 

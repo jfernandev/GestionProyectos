@@ -1,4 +1,3 @@
-
 package utilidades;
 
 import java.io.BufferedWriter;
@@ -10,15 +9,12 @@ import java.util.List;
 
 public class ExportadorCSV {
 
-    // Carpeta donde se guardarán los archivos exportados
     private static final Path CARPETA_EXPORTACIONES =
             Path.of("exportaciones");
 
-    // Constructor privado: esta clase solo contiene métodos estáticos
     private ExportadorCSV() {
     }
 
-    // Exporta una tabla de datos a un archivo CSV
     public static Path exportar(
             String nombreArchivo,
             String[] cabeceras,
@@ -54,7 +50,6 @@ public class ExportadorCSV {
 
         try {
 
-            // Creamos la carpeta si todavía no existe
             Files.createDirectories(CARPETA_EXPORTACIONES);
 
             try (BufferedWriter escritor = Files.newBufferedWriter(
@@ -65,10 +60,8 @@ public class ExportadorCSV {
                 // BOM para mejorar la compatibilidad con Excel
                 escritor.write('\uFEFF');
 
-                // Escribimos las cabeceras
                 escribirFila(escritor, cabeceras);
 
-                // Escribimos los registros
                 for (String[] fila : filas) {
 
                     if (fila.length != cabeceras.length) {
@@ -91,7 +84,6 @@ public class ExportadorCSV {
         }
     }
 
-    // Escribe una fila completa separando sus columnas con punto y coma
     private static void escribirFila(
             BufferedWriter escritor,
             String[] valores
@@ -109,15 +101,12 @@ public class ExportadorCSV {
         escritor.newLine();
     }
 
-    // Escapa los valores que contienen caracteres especiales
     private static String escaparValor(String valor) {
 
         if (valor == null) {
             return "";
         }
 
-        // Si contiene comillas, punto y coma o saltos de línea,
-        // encerramos el valor entre comillas dobles
         if (valor.contains(";") ||
                 valor.contains("\"") ||
                 valor.contains("\n") ||

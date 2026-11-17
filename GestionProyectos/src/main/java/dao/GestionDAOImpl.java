@@ -1,4 +1,3 @@
-
 package dao;
 
 import modelo.Gestion;
@@ -20,14 +19,12 @@ public class GestionDAOImpl implements GestionDAO {
 
             transaction = session.beginTransaction();
 
-            // Comprobamos que la gestión no sea nula
             if (gestion == null) {
                 throw new IllegalArgumentException(
                         "La gestión no puede ser nula."
                 );
             }
 
-            // Comprobamos que las tres relaciones estén informadas
             if (gestion.getProveedor() == null ||
                     gestion.getPieza() == null ||
                     gestion.getProyecto() == null) {
@@ -37,7 +34,6 @@ public class GestionDAOImpl implements GestionDAO {
                 );
             }
 
-            // Recuperamos las entidades reales de la base de datos
             modelo.Proveedor proveedor = session.find(
                     modelo.Proveedor.class,
                     gestion.getProveedor().getCodigo()
@@ -53,14 +49,12 @@ public class GestionDAOImpl implements GestionDAO {
                     gestion.getProyecto().getCodigo()
             );
 
-            // Comprobamos que existan las tres entidades
             if (proveedor == null || pieza == null || proyecto == null) {
                 throw new IllegalArgumentException(
                         "El proveedor, la pieza o el proyecto indicado no existe."
                 );
             }
 
-            // Asignamos las entidades recuperadas y guardamos la gestión
             gestion.setProveedor(proveedor);
             gestion.setPieza(pieza);
             gestion.setProyecto(proyecto);
@@ -175,7 +169,6 @@ public class GestionDAOImpl implements GestionDAO {
         }
     }
 
-    // Búsqueda avanzada con filtros opcionales
     @Override
     public List<Gestion> buscarAvanzado(
             String codigoProveedor,
@@ -266,7 +259,6 @@ public class GestionDAOImpl implements GestionDAO {
         }
     }
 
-    // Calcula el coste total de los suministros agrupados por proyecto
     @Override
     public List<Object[]> calcularCostesPorProyecto() {
 
@@ -291,7 +283,6 @@ public class GestionDAOImpl implements GestionDAO {
         }
     }
 
-    // Calcula la cantidad total de unidades suministradas
     @Override
     public Long calcularCantidadTotalSuministrada() {
 
@@ -309,7 +300,6 @@ public class GestionDAOImpl implements GestionDAO {
         }
     }
 
-    // Obtiene los proveedores ordenados por cantidad suministrada
     @Override
     public List<Object[]> obtenerProveedoresMasActivos() {
 
@@ -333,7 +323,6 @@ public class GestionDAOImpl implements GestionDAO {
         }
     }
 
-    // Obtiene las piezas ordenadas por cantidad utilizada
     @Override
     public List<Object[]> obtenerPiezasMasUtilizadas() {
 
@@ -366,21 +355,18 @@ public class GestionDAOImpl implements GestionDAO {
 
             transaction = session.beginTransaction();
 
-            // Comprobamos que la gestión no sea nula
             if (gestion == null) {
                 throw new IllegalArgumentException(
                         "La gestión no puede ser nula."
                 );
             }
 
-            // Comprobamos que tenga identificador
             if (gestion.getId() == null) {
                 throw new IllegalArgumentException(
                         "La gestión debe tener un identificador."
                 );
             }
 
-            // Comprobamos que las tres relaciones estén informadas
             if (gestion.getProveedor() == null ||
                     gestion.getPieza() == null ||
                     gestion.getProyecto() == null) {
@@ -390,7 +376,6 @@ public class GestionDAOImpl implements GestionDAO {
                 );
             }
 
-            // Buscamos la gestión que queremos modificar
             Gestion gestionExistente = session.find(
                     Gestion.class,
                     gestion.getId()
@@ -402,7 +387,6 @@ public class GestionDAOImpl implements GestionDAO {
                 );
             }
 
-            // Recuperamos las entidades reales de la base de datos
             modelo.Proveedor proveedor = session.find(
                     modelo.Proveedor.class,
                     gestion.getProveedor().getCodigo()
@@ -418,14 +402,12 @@ public class GestionDAOImpl implements GestionDAO {
                     gestion.getProyecto().getCodigo()
             );
 
-            // Comprobamos que existan las tres entidades
             if (proveedor == null || pieza == null || proyecto == null) {
                 throw new IllegalArgumentException(
                         "El proveedor, la pieza o el proyecto indicado no existe."
                 );
             }
 
-            // Actualizamos los datos de la gestión existente
             gestionExistente.setFecha(gestion.getFecha());
             gestionExistente.setCantidad(gestion.getCantidad());
             gestionExistente.setProveedor(proveedor);

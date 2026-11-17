@@ -1,4 +1,3 @@
-
 package dao;
 
 import modelo.Pieza;
@@ -17,18 +16,14 @@ public class PiezaDAOImpl implements PiezaDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Guardamos la pieza
             session.persist(pieza);
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Deshacemos los cambios si ocurre algún error
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
@@ -42,7 +37,6 @@ public class PiezaDAOImpl implements PiezaDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Buscamos la pieza mediante su clave primaria
             return session.find(Pieza.class, codigo);
 
         } catch (Exception e) {
@@ -55,7 +49,6 @@ public class PiezaDAOImpl implements PiezaDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Buscamos piezas cuyo nombre contenga el texto indicado
             return session.createQuery(
                             "FROM Pieza p WHERE LOWER(p.nombre) LIKE LOWER(:nombre)",
                             Pieza.class
@@ -73,7 +66,6 @@ public class PiezaDAOImpl implements PiezaDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Recuperamos todas las piezas ordenadas por código
             return session.createQuery(
                     "FROM Pieza p ORDER BY p.codigo",
                     Pieza.class
@@ -91,18 +83,14 @@ public class PiezaDAOImpl implements PiezaDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Actualizamos la pieza
             session.merge(pieza);
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Deshacemos los cambios si ocurre algún error
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
@@ -118,25 +106,20 @@ public class PiezaDAOImpl implements PiezaDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Buscamos la pieza que queremos eliminar
             Pieza pieza = session.find(Pieza.class, codigo);
 
             if (pieza == null) {
                 throw new RuntimeException("No existe ninguna pieza con ese código.");
             }
 
-            // Eliminamos la pieza
             session.remove(pieza);
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Deshacemos los cambios si ocurre algún error
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }

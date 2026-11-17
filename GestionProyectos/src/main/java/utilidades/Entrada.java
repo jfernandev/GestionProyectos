@@ -1,4 +1,3 @@
-
 package utilidades;
 
 import java.math.BigDecimal;
@@ -8,7 +7,6 @@ import java.util.Scanner;
 
 public class Entrada {
 
-    // Lee un texto obligatorio, evitando que se introduzcan cadenas vacías
     public static String leerTexto(Scanner scanner, String mensaje) {
 
         String texto;
@@ -26,14 +24,12 @@ public class Entrada {
         return texto;
     }
 
-    // Lee un texto que puede dejarse vacío, por ejemplo una descripción
     public static String leerTextoOpcional(Scanner scanner, String mensaje) {
 
         System.out.print(mensaje);
         return scanner.nextLine().trim();
     }
 
-    // Lee un número entero y repite la petición si el formato no es correcto
     public static int leerEntero(Scanner scanner, String mensaje) {
 
         while (true) {
@@ -47,7 +43,6 @@ public class Entrada {
         }
     }
 
-    // Lee un número entero largo, por ejemplo el identificador de una gestión
     public static long leerLong(Scanner scanner, String mensaje) {
 
         while (true) {
@@ -61,7 +56,6 @@ public class Entrada {
         }
     }
 
-    // Lee un número decimal, aceptando tanto coma como punto
     public static BigDecimal leerDecimal(Scanner scanner, String mensaje) {
 
         while (true) {
@@ -78,7 +72,6 @@ public class Entrada {
         }
     }
 
-    // Lee una fecha con el formato año-mes-día (por ejemplo, 2026-11-04)
     public static LocalDate leerFecha(Scanner scanner, String mensaje) {
 
         while (true) {
