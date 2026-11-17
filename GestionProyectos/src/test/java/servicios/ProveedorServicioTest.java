@@ -1,8 +1,12 @@
+
 package servicios;
 
 import dao.ProveedorDAO;
 import modelo.Proveedor;
+import modelo.Usuario;
+import utilidades.SesionUsuario;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,10 +26,29 @@ class ProveedorServicioTest {
     // Se ejecuta antes de cada prueba
     @BeforeEach
     void setUp() {
+
         proveedorDAO = mock(ProveedorDAO.class);
+
+        // Creamos un administrador simulado
+        Usuario administrador = new Usuario(
+                "admin",
+                "hash_simulado",
+                "ADMIN"
+        );
+
+        // Establecemos la sesión del administrador
+        SesionUsuario.establecerUsuario(administrador);
 
         // Inyectamos el DAO simulado en el servicio
         proveedorServicio = new ProveedorServicio(proveedorDAO);
+    }
+
+    // Se ejecuta después de cada prueba
+    @AfterEach
+    void tearDown() {
+
+        // Cerramos la sesión para evitar que afecte a otras pruebas
+        SesionUsuario.cerrarSesion();
     }
 
     // Crea un proveedor válido para utilizarlo en las pruebas
@@ -119,6 +142,7 @@ class ProveedorServicioTest {
 
         verify(proveedorDAO, never()).buscarPorCodigo(anyString());
     }
+
     // Comprueba que no se pueda actualizar un proveedor inexistente
     @Test
     void actualizarProveedorInexistente() {

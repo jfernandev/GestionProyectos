@@ -20,29 +20,50 @@ public class GestionDAOImpl implements GestionDAO {
 
             transaction = session.beginTransaction();
 
-            gestion.setProveedor(
-                    session.find(modelo.Proveedor.class,
-                            gestion.getProveedor().getCodigo())
-            );
+            // Comprobamos que la gestión no sea nula
+            if (gestion == null) {
+                throw new IllegalArgumentException(
+                        "La gestión no puede ser nula."
+                );
+            }
 
-            gestion.setPieza(
-                    session.find(modelo.Pieza.class,
-                            gestion.getPieza().getCodigo())
-            );
-
-            gestion.setProyecto(
-                    session.find(modelo.Proyecto.class,
-                            gestion.getProyecto().getCodigo())
-            );
-
+            // Comprobamos que las tres relaciones estén informadas
             if (gestion.getProveedor() == null ||
                     gestion.getPieza() == null ||
                     gestion.getProyecto() == null) {
 
-                throw new RuntimeException(
+                throw new IllegalArgumentException(
+                        "La gestión debe tener proveedor, pieza y proyecto."
+                );
+            }
+
+            // Recuperamos las entidades reales de la base de datos
+            modelo.Proveedor proveedor = session.find(
+                    modelo.Proveedor.class,
+                    gestion.getProveedor().getCodigo()
+            );
+
+            modelo.Pieza pieza = session.find(
+                    modelo.Pieza.class,
+                    gestion.getPieza().getCodigo()
+            );
+
+            modelo.Proyecto proyecto = session.find(
+                    modelo.Proyecto.class,
+                    gestion.getProyecto().getCodigo()
+            );
+
+            // Comprobamos que existan las tres entidades
+            if (proveedor == null || pieza == null || proyecto == null) {
+                throw new IllegalArgumentException(
                         "El proveedor, la pieza o el proyecto indicado no existe."
                 );
             }
+
+            // Asignamos las entidades recuperadas y guardamos la gestión
+            gestion.setProveedor(proveedor);
+            gestion.setPieza(pieza);
+            gestion.setProyecto(proyecto);
 
             session.persist(gestion);
 
@@ -345,7 +366,35 @@ public class GestionDAOImpl implements GestionDAO {
 
             transaction = session.beginTransaction();
 
-            Gestion gestionExistente = session.find(Gestion.class, gestion.getId());
+            // Comprobamos que la gestión no sea nula
+            if (gestion == null) {
+                throw new IllegalArgumentException(
+                        "La gestión no puede ser nula."
+                );
+            }
+
+            // Comprobamos que tenga identificador
+            if (gestion.getId() == null) {
+                throw new IllegalArgumentException(
+                        "La gestión debe tener un identificador."
+                );
+            }
+
+            // Comprobamos que las tres relaciones estén informadas
+            if (gestion.getProveedor() == null ||
+                    gestion.getPieza() == null ||
+                    gestion.getProyecto() == null) {
+
+                throw new IllegalArgumentException(
+                        "La gestión debe tener proveedor, pieza y proyecto."
+                );
+            }
+
+            // Buscamos la gestión que queremos modificar
+            Gestion gestionExistente = session.find(
+                    Gestion.class,
+                    gestion.getId()
+            );
 
             if (gestionExistente == null) {
                 throw new RuntimeException(
@@ -353,35 +402,35 @@ public class GestionDAOImpl implements GestionDAO {
                 );
             }
 
-            gestion.setProveedor(
-                    session.find(modelo.Proveedor.class,
-                            gestion.getProveedor().getCodigo())
+            // Recuperamos las entidades reales de la base de datos
+            modelo.Proveedor proveedor = session.find(
+                    modelo.Proveedor.class,
+                    gestion.getProveedor().getCodigo()
             );
 
-            gestion.setPieza(
-                    session.find(modelo.Pieza.class,
-                            gestion.getPieza().getCodigo())
+            modelo.Pieza pieza = session.find(
+                    modelo.Pieza.class,
+                    gestion.getPieza().getCodigo()
             );
 
-            gestion.setProyecto(
-                    session.find(modelo.Proyecto.class,
-                            gestion.getProyecto().getCodigo())
+            modelo.Proyecto proyecto = session.find(
+                    modelo.Proyecto.class,
+                    gestion.getProyecto().getCodigo()
             );
 
-            if (gestion.getProveedor() == null ||
-                    gestion.getPieza() == null ||
-                    gestion.getProyecto() == null) {
-
-                throw new RuntimeException(
+            // Comprobamos que existan las tres entidades
+            if (proveedor == null || pieza == null || proyecto == null) {
+                throw new IllegalArgumentException(
                         "El proveedor, la pieza o el proyecto indicado no existe."
                 );
             }
 
+            // Actualizamos los datos de la gestión existente
             gestionExistente.setFecha(gestion.getFecha());
             gestionExistente.setCantidad(gestion.getCantidad());
-            gestionExistente.setProveedor(gestion.getProveedor());
-            gestionExistente.setPieza(gestion.getPieza());
-            gestionExistente.setProyecto(gestion.getProyecto());
+            gestionExistente.setProveedor(proveedor);
+            gestionExistente.setPieza(pieza);
+            gestionExistente.setProyecto(proyecto);
 
             transaction.commit();
 

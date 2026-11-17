@@ -10,7 +10,11 @@ import modelo.Gestion;
 import modelo.Proveedor;
 import modelo.Pieza;
 import modelo.Proyecto;
+import modelo.Usuario;
 
+import utilidades.SesionUsuario;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,6 +44,16 @@ class GestionServicioTest {
         piezaDAO = mock(PiezaDAO.class);
         proyectoDAO = mock(ProyectoDAO.class);
 
+        // Creamos un administrador simulado
+        Usuario administrador = new Usuario(
+                "admin",
+                "hash_simulado",
+                "ADMIN"
+        );
+
+        // Establecemos la sesión del administrador
+        SesionUsuario.establecerUsuario(administrador);
+
         // Inyectamos los cuatro DAO simulados
         gestionServicio = new GestionServicio(
                 gestionDAO,
@@ -47,6 +61,14 @@ class GestionServicioTest {
                 piezaDAO,
                 proyectoDAO
         );
+    }
+
+    // Se ejecuta después de cada prueba
+    @AfterEach
+    void tearDown() {
+
+        // Cerramos la sesión para evitar que afecte a otras pruebas
+        SesionUsuario.cerrarSesion();
     }
 
     // Crea un proveedor válido para las pruebas
@@ -355,9 +377,8 @@ class GestionServicioTest {
                 )
         );
 
-        verify(gestionDAO, never()).buscarAvanzado(
-                any(), any(), any(), any(), any(), any(), any()
-        );
+        // Comprobamos que no se haya llamado al DAO
+        verifyNoInteractions(gestionDAO);
     }
 
     // Comprueba que la cantidad mínima no pueda superar a la máxima
@@ -377,9 +398,8 @@ class GestionServicioTest {
                 )
         );
 
-        verify(gestionDAO, never()).buscarAvanzado(
-                any(), any(), any(), any(), any(), any(), any()
-        );
+        // Comprobamos que no se haya llamado al DAO
+        verifyNoInteractions(gestionDAO);
     }
 
     // Comprueba que la cantidad mínima no pueda ser cero o negativa
@@ -399,9 +419,8 @@ class GestionServicioTest {
                 )
         );
 
-        verify(gestionDAO, never()).buscarAvanzado(
-                any(), any(), any(), any(), any(), any(), any()
-        );
+        // Comprobamos que no se haya llamado al DAO
+        verifyNoInteractions(gestionDAO);
     }
 
     // Comprueba que la cantidad máxima no pueda ser cero o negativa
@@ -421,8 +440,7 @@ class GestionServicioTest {
                 )
         );
 
-        verify(gestionDAO, never()).buscarAvanzado(
-                any(), any(), any(), any(), any(), any(), any()
-        );
+        // Comprobamos que no se haya llamado al DAO
+        verifyNoInteractions(gestionDAO);
     }
 }

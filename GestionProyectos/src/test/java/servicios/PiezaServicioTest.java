@@ -1,8 +1,12 @@
+
 package servicios;
 
 import dao.PiezaDAO;
 import modelo.Pieza;
+import modelo.Usuario;
+import utilidades.SesionUsuario;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,10 +27,29 @@ class PiezaServicioTest {
     // Se ejecuta antes de cada prueba
     @BeforeEach
     void setUp() {
+
         piezaDAO = mock(PiezaDAO.class);
+
+        // Creamos un administrador simulado
+        Usuario administrador = new Usuario(
+                "admin",
+                "hash_simulado",
+                "ADMIN"
+        );
+
+        // Establecemos la sesión del administrador
+        SesionUsuario.establecerUsuario(administrador);
 
         // Inyectamos el DAO simulado
         piezaServicio = new PiezaServicio(piezaDAO);
+    }
+
+    // Se ejecuta después de cada prueba
+    @AfterEach
+    void tearDown() {
+
+        // Cerramos la sesión para evitar que afecte a otras pruebas
+        SesionUsuario.cerrarSesion();
     }
 
     // Crea una pieza con datos válidos
