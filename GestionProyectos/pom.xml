@@ -54,6 +54,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
+
         <!-- Implementación del sistema de logging mediante Logback -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
