@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+    <!-- Los registros se mostrarán por consola -->
+    <appender name="CONSOLA" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Nivel de registro de nuestra aplicación -->
+    <logger name="servicios" level="INFO"/>
+    <logger name="menu" level="INFO"/>
+
+    <!-- Configuración general -->
+    <root level="WARN">
+        <appender-ref ref="CONSOLA"/>
+    </root>
+
+</configuration>
