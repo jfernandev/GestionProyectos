@@ -1,3 +1,4 @@
+
 package servicios;
 
 import dao.GestionDAO;
@@ -290,5 +291,138 @@ class GestionServicioTest {
         assertNotNull(resultado);
 
         verify(gestionDAO, times(1)).buscarPorId(1L);
+    }
+
+    // Comprueba que se pueda realizar una búsqueda avanzada correctamente
+    @Test
+    void buscarAvanzadoCorrectamente() {
+
+        List<Gestion> gestiones = List.of(crearGestion());
+
+        LocalDate fechaDesde = LocalDate.of(2026, 1, 1);
+        LocalDate fechaHasta = LocalDate.of(2026, 12, 31);
+
+        when(gestionDAO.buscarAvanzado(
+                "PROV001",
+                "PIEZA001",
+                "PROY001",
+                fechaDesde,
+                fechaHasta,
+                5,
+                100
+        )).thenReturn(gestiones);
+
+        List<Gestion> resultado = gestionServicio.buscarAvanzado(
+                "PROV001",
+                "PIEZA001",
+                "PROY001",
+                fechaDesde,
+                fechaHasta,
+                5,
+                100
+        );
+
+        assertEquals(1, resultado.size());
+
+        verify(gestionDAO, times(1)).buscarAvanzado(
+                "PROV001",
+                "PIEZA001",
+                "PROY001",
+                fechaDesde,
+                fechaHasta,
+                5,
+                100
+        );
+    }
+
+    // Comprueba que la fecha inicial no pueda ser posterior a la final
+    @Test
+    void buscarAvanzadoConFechasIncorrectas() {
+
+        LocalDate fechaDesde = LocalDate.of(2026, 12, 31);
+        LocalDate fechaHasta = LocalDate.of(2026, 1, 1);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> gestionServicio.buscarAvanzado(
+                        null,
+                        null,
+                        null,
+                        fechaDesde,
+                        fechaHasta,
+                        null,
+                        null
+                )
+        );
+
+        verify(gestionDAO, never()).buscarAvanzado(
+                any(), any(), any(), any(), any(), any(), any()
+        );
+    }
+
+    // Comprueba que la cantidad mínima no pueda superar a la máxima
+    @Test
+    void buscarAvanzadoConCantidadesIncorrectas() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> gestionServicio.buscarAvanzado(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        100,
+                        10
+                )
+        );
+
+        verify(gestionDAO, never()).buscarAvanzado(
+                any(), any(), any(), any(), any(), any(), any()
+        );
+    }
+
+    // Comprueba que la cantidad mínima no pueda ser cero o negativa
+    @Test
+    void buscarAvanzadoConCantidadMinimaNoValida() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> gestionServicio.buscarAvanzado(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        0,
+                        null
+                )
+        );
+
+        verify(gestionDAO, never()).buscarAvanzado(
+                any(), any(), any(), any(), any(), any(), any()
+        );
+    }
+
+    // Comprueba que la cantidad máxima no pueda ser cero o negativa
+    @Test
+    void buscarAvanzadoConCantidadMaximaNoValida() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> gestionServicio.buscarAvanzado(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        -5
+                )
+        );
+
+        verify(gestionDAO, never()).buscarAvanzado(
+                any(), any(), any(), any(), any(), any(), any()
+        );
     }
 }
