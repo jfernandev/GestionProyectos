@@ -1,14 +1,20 @@
-
 package servicios;
 
 import dao.PiezaDAO;
 import dao.PiezaDAOImpl;
 import modelo.Pieza;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 public class PiezaServicio {
+
+    // Logger encargado de registrar las operaciones y los errores
+    private static final Logger logger =
+            LoggerFactory.getLogger(PiezaServicio.class);
 
     // DAO encargado de comunicarse con la base de datos
     private final PiezaDAO piezaDAO;
@@ -26,67 +32,127 @@ public class PiezaServicio {
     // Registra una pieza después de validar sus datos
     public void registrar(Pieza pieza) {
 
-        validarPieza(pieza);
+        try {
+            validarPieza(pieza);
 
-        // Comprobamos que no exista otra pieza con el mismo código
-        if (piezaDAO.buscarPorCodigo(pieza.getCodigo()) != null) {
-            throw new IllegalArgumentException(
-                    "Ya existe una pieza con ese código."
-            );
+            // Comprobamos que no exista otra pieza con el mismo código
+            if (piezaDAO.buscarPorCodigo(pieza.getCodigo()) != null) {
+                throw new IllegalArgumentException(
+                        "Ya existe una pieza con ese código."
+                );
+            }
+
+            piezaDAO.guardar(pieza);
+
+            logger.info("Pieza registrada correctamente. Código: {}",
+                    pieza.getCodigo());
+
+        } catch (RuntimeException e) {
+            logger.error("Error al registrar la pieza.", e);
+            throw e;
         }
-
-        piezaDAO.guardar(pieza);
     }
 
     // Busca una pieza por su código
     public Pieza buscarPorCodigo(String codigo) {
 
-        validarTexto(codigo, "El código");
+        try {
+            validarTexto(codigo, "El código");
 
-        return piezaDAO.buscarPorCodigo(codigo.trim());
+            Pieza pieza = piezaDAO.buscarPorCodigo(codigo.trim());
+
+            logger.info("Búsqueda de pieza por código: {}", codigo.trim());
+
+            return pieza;
+
+        } catch (RuntimeException e) {
+            logger.error("Error al buscar la pieza por código: {}", codigo, e);
+            throw e;
+        }
     }
 
     // Busca piezas por su nombre
     public List<Pieza> buscarPorNombre(String nombre) {
 
-        validarTexto(nombre, "El nombre");
+        try {
+            validarTexto(nombre, "El nombre");
 
-        return piezaDAO.buscarPorNombre(nombre.trim());
+            List<Pieza> piezas = piezaDAO.buscarPorNombre(nombre.trim());
+
+            logger.info("Búsqueda de piezas por nombre realizada. Resultados: {}",
+                    piezas.size());
+
+            return piezas;
+
+        } catch (RuntimeException e) {
+            logger.error("Error al buscar piezas por nombre.", e);
+            throw e;
+        }
     }
 
     // Devuelve todas las piezas registradas
     public List<Pieza> listarTodas() {
-        return piezaDAO.listarTodas();
+
+        try {
+            List<Pieza> piezas = piezaDAO.listarTodas();
+
+            logger.info("Listado de piezas realizado. Total: {}",
+                    piezas.size());
+
+            return piezas;
+
+        } catch (RuntimeException e) {
+            logger.error("Error al listar las piezas.", e);
+            throw e;
+        }
     }
 
     // Actualiza una pieza existente
     public void actualizar(Pieza pieza) {
 
-        validarPieza(pieza);
+        try {
+            validarPieza(pieza);
 
-        // Comprobamos que la pieza exista
-        if (piezaDAO.buscarPorCodigo(pieza.getCodigo()) == null) {
-            throw new IllegalArgumentException(
-                    "No existe ninguna pieza con ese código."
-            );
+            // Comprobamos que la pieza exista
+            if (piezaDAO.buscarPorCodigo(pieza.getCodigo()) == null) {
+                throw new IllegalArgumentException(
+                        "No existe ninguna pieza con ese código."
+                );
+            }
+
+            piezaDAO.actualizar(pieza);
+
+            logger.info("Pieza actualizada correctamente. Código: {}",
+                    pieza.getCodigo());
+
+        } catch (RuntimeException e) {
+            logger.error("Error al actualizar la pieza.", e);
+            throw e;
         }
-
-        piezaDAO.actualizar(pieza);
     }
 
     // Elimina una pieza por su código
     public void eliminar(String codigo) {
 
-        validarTexto(codigo, "El código");
+        try {
+            validarTexto(codigo, "El código");
 
-        // Comprobamos que la pieza exista
-        if (piezaDAO.buscarPorCodigo(codigo.trim()) == null) {
-            throw new IllegalArgumentException(
-                    "No existe ninguna pieza con ese código."
-            );
+            // Comprobamos que la pieza exista
+            if (piezaDAO.buscarPorCodigo(codigo.trim()) == null) {
+                throw new IllegalArgumentException(
+                        "No existe ninguna pieza con ese código."
+                );
+            }
+
+            piezaDAO.eliminar(codigo.trim());
+
+            logger.info("Pieza eliminada correctamente. Código: {}",
+                    codigo.trim());
+
+        } catch (RuntimeException e) {
+            logger.error("Error al eliminar la pieza. Código: {}", codigo, e);
+            throw e;
         }
-
-        piezaDAO.eliminar(codigo.trim());
     }
 
     // Valida todos los campos de una pieza

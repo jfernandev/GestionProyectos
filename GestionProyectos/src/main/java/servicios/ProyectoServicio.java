@@ -1,13 +1,19 @@
-
 package servicios;
 
 import dao.ProyectoDAO;
 import dao.ProyectoDAOImpl;
 import modelo.Proyecto;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 public class ProyectoServicio {
+
+    // Logger encargado de registrar las operaciones y los errores
+    private static final Logger logger =
+            LoggerFactory.getLogger(ProyectoServicio.class);
 
     // DAO encargado de comunicarse con la base de datos
     private final ProyectoDAO proyectoDAO;
@@ -25,75 +31,149 @@ public class ProyectoServicio {
     // Registra un proyecto después de validar sus datos
     public void registrar(Proyecto proyecto) {
 
-        validarProyecto(proyecto);
+        try {
+            validarProyecto(proyecto);
 
-        // Comprobamos que no exista otro proyecto con el mismo código
-        if (proyectoDAO.buscarPorCodigo(proyecto.getCodigo()) != null) {
-            throw new IllegalArgumentException(
-                    "Ya existe un proyecto con ese código."
-            );
+            // Comprobamos que no exista otro proyecto con el mismo código
+            if (proyectoDAO.buscarPorCodigo(proyecto.getCodigo()) != null) {
+                throw new IllegalArgumentException(
+                        "Ya existe un proyecto con ese código."
+                );
+            }
+
+            proyectoDAO.guardar(proyecto);
+
+            logger.info("Proyecto registrado correctamente. Código: {}",
+                    proyecto.getCodigo());
+
+        } catch (RuntimeException e) {
+            logger.error("Error al registrar el proyecto.", e);
+            throw e;
         }
-
-        proyectoDAO.guardar(proyecto);
     }
 
     // Busca un proyecto por su código
     public Proyecto buscarPorCodigo(String codigo) {
 
-        validarTexto(codigo, "El código");
+        try {
+            validarTexto(codigo, "El código");
 
-        return proyectoDAO.buscarPorCodigo(codigo.trim());
+            Proyecto proyecto =
+                    proyectoDAO.buscarPorCodigo(codigo.trim());
+
+            logger.info("Búsqueda de proyecto por código: {}", codigo.trim());
+
+            return proyecto;
+
+        } catch (RuntimeException e) {
+            logger.error("Error al buscar el proyecto por código: {}", codigo, e);
+            throw e;
+        }
     }
 
     // Busca proyectos por su nombre
     public List<Proyecto> buscarPorNombre(String nombre) {
 
-        validarTexto(nombre, "El nombre");
+        try {
+            validarTexto(nombre, "El nombre");
 
-        return proyectoDAO.buscarPorNombre(nombre.trim());
+            List<Proyecto> proyectos =
+                    proyectoDAO.buscarPorNombre(nombre.trim());
+
+            logger.info("Búsqueda de proyectos por nombre realizada. Resultados: {}",
+                    proyectos.size());
+
+            return proyectos;
+
+        } catch (RuntimeException e) {
+            logger.error("Error al buscar proyectos por nombre.", e);
+            throw e;
+        }
     }
 
     // Busca proyectos por ciudad
     public List<Proyecto> buscarPorCiudad(String ciudad) {
 
-        validarTexto(ciudad, "La ciudad");
+        try {
+            validarTexto(ciudad, "La ciudad");
 
-        return proyectoDAO.buscarPorCiudad(ciudad.trim());
+            List<Proyecto> proyectos =
+                    proyectoDAO.buscarPorCiudad(ciudad.trim());
+
+            logger.info("Búsqueda de proyectos por ciudad realizada. Resultados: {}",
+                    proyectos.size());
+
+            return proyectos;
+
+        } catch (RuntimeException e) {
+            logger.error("Error al buscar proyectos por ciudad.", e);
+            throw e;
+        }
     }
 
     // Devuelve todos los proyectos registrados
     public List<Proyecto> listarTodos() {
-        return proyectoDAO.listarTodos();
+
+        try {
+            List<Proyecto> proyectos = proyectoDAO.listarTodos();
+
+            logger.info("Listado de proyectos realizado. Total: {}",
+                    proyectos.size());
+
+            return proyectos;
+
+        } catch (RuntimeException e) {
+            logger.error("Error al listar los proyectos.", e);
+            throw e;
+        }
     }
 
     // Actualiza un proyecto existente
     public void actualizar(Proyecto proyecto) {
 
-        validarProyecto(proyecto);
+        try {
+            validarProyecto(proyecto);
 
-        // Comprobamos que el proyecto exista
-        if (proyectoDAO.buscarPorCodigo(proyecto.getCodigo()) == null) {
-            throw new IllegalArgumentException(
-                    "No existe ningún proyecto con ese código."
-            );
+            // Comprobamos que el proyecto exista
+            if (proyectoDAO.buscarPorCodigo(proyecto.getCodigo()) == null) {
+                throw new IllegalArgumentException(
+                        "No existe ningún proyecto con ese código."
+                );
+            }
+
+            proyectoDAO.actualizar(proyecto);
+
+            logger.info("Proyecto actualizado correctamente. Código: {}",
+                    proyecto.getCodigo());
+
+        } catch (RuntimeException e) {
+            logger.error("Error al actualizar el proyecto.", e);
+            throw e;
         }
-
-        proyectoDAO.actualizar(proyecto);
     }
 
     // Elimina un proyecto por su código
     public void eliminar(String codigo) {
 
-        validarTexto(codigo, "El código");
+        try {
+            validarTexto(codigo, "El código");
 
-        // Comprobamos que el proyecto exista
-        if (proyectoDAO.buscarPorCodigo(codigo.trim()) == null) {
-            throw new IllegalArgumentException(
-                    "No existe ningún proyecto con ese código."
-            );
+            // Comprobamos que el proyecto exista
+            if (proyectoDAO.buscarPorCodigo(codigo.trim()) == null) {
+                throw new IllegalArgumentException(
+                        "No existe ningún proyecto con ese código."
+                );
+            }
+
+            proyectoDAO.eliminar(codigo.trim());
+
+            logger.info("Proyecto eliminado correctamente. Código: {}",
+                    codigo.trim());
+
+        } catch (RuntimeException e) {
+            logger.error("Error al eliminar el proyecto. Código: {}", codigo, e);
+            throw e;
         }
-
-        proyectoDAO.eliminar(codigo.trim());
     }
 
     // Valida todos los campos obligatorios del proyecto
