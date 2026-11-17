@@ -27,21 +27,23 @@ public class MenuPrincipal {
             switch (opcion) {
 
                 case 1:
-                    // Abrimos el submenú de proveedores
                     MenuProveedores menuProveedores = new MenuProveedores(scanner);
                     menuProveedores.iniciar();
                     break;
 
                 case 2:
-                    System.out.println("\nApartado de gestión de piezas.");
+                    MenuPiezas menuPiezas = new MenuPiezas(scanner);
+                    menuPiezas.iniciar();
                     break;
 
                 case 3:
-                    System.out.println("\nApartado de gestión de proyectos.");
+                    MenuProyectos menuProyectos = new MenuProyectos(scanner);
+                    menuProyectos.iniciar();
                     break;
 
                 case 4:
-                    System.out.println("\nApartado de gestión de gestiones.");
+                    MenuGestiones menuGestiones = new MenuGestiones(scanner);
+                    menuGestiones.iniciar();
                     break;
 
                 case 5:
