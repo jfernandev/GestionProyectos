@@ -4,9 +4,14 @@ package dao;
 import modelo.Usuario;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import utilidades.HibernateUtil;
 
 public class UsuarioDAOImpl implements UsuarioDAO {
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(UsuarioDAOImpl.class);
 
     @Override
     public void guardar(Usuario usuario) {
@@ -22,11 +27,21 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 
             transaction.commit();
 
+            logger.info(
+                    "Usuario guardado correctamente: {}",
+                    usuario.getNombreUsuario()
+            );
+
         } catch (Exception e) {
 
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
+
+            logger.error(
+                    "Error al guardar el usuario.",
+                    e
+            );
 
             throw new RuntimeException(
                     "Error al guardar el usuario.", e
@@ -48,6 +63,12 @@ public class UsuarioDAOImpl implements UsuarioDAO {
                     .uniqueResult();
 
         } catch (Exception e) {
+
+            logger.error(
+                    "Error al buscar el usuario: {}",
+                    nombreUsuario,
+                    e
+            );
 
             throw new RuntimeException(
                     "Error al buscar el usuario.", e
@@ -73,6 +94,12 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 
         } catch (Exception e) {
 
+            logger.error(
+                    "Error al comprobar el nombre de usuario: {}",
+                    nombreUsuario,
+                    e
+            );
+
             throw new RuntimeException(
                     "Error al comprobar el nombre de usuario.", e
             );
@@ -93,6 +120,11 @@ public class UsuarioDAOImpl implements UsuarioDAO {
             return cantidad > 0;
 
         } catch (Exception e) {
+
+            logger.error(
+                    "Error al comprobar los usuarios registrados.",
+                    e
+            );
 
             throw new RuntimeException(
                     "Error al comprobar los usuarios registrados.", e

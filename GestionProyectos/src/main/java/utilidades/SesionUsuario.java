@@ -2,8 +2,14 @@
 package utilidades;
 
 import modelo.Usuario;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SesionUsuario {
+
+    // Logger para registrar la actividad de las sesiones
+    private static final Logger logger =
+            LoggerFactory.getLogger(SesionUsuario.class);
 
     // Usuario que tiene la sesión iniciada actualmente
     private static Usuario usuarioActual;
@@ -21,7 +27,18 @@ public class SesionUsuario {
             );
         }
 
+        if (haySesionIniciada()) {
+            throw new IllegalStateException(
+                    "Ya existe una sesión iniciada."
+            );
+        }
+
         usuarioActual = usuario;
+
+        logger.info(
+                "Sesión establecida para el usuario: {}",
+                usuario.getNombreUsuario()
+        );
     }
 
     // Devuelve el usuario de la sesión actual
@@ -45,6 +62,13 @@ public class SesionUsuario {
     public static void exigirAdministrador() {
 
         if (!esAdministrador()) {
+            logger.warn(
+                    "Operación administrativa rechazada. Usuario: {}",
+                    usuarioActual == null
+                            ? "Sin sesión"
+                            : usuarioActual.getNombreUsuario()
+            );
+
             throw new SecurityException(
                     "No tienes permisos para realizar esta operación."
             );
@@ -53,6 +77,15 @@ public class SesionUsuario {
 
     // Cierra la sesión actual
     public static void cerrarSesion() {
-        usuarioActual = null;
+
+        if (usuarioActual != null) {
+
+            logger.info(
+                    "Sesión cerrada para el usuario: {}",
+                    usuarioActual.getNombreUsuario()
+            );
+
+            usuarioActual = null;
+        }
     }
 }

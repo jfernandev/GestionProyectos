@@ -6,9 +6,16 @@ import servicios.UsuarioServicio;
 import utilidades.HibernateUtil;
 import utilidades.SesionUsuario;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Scanner;
 
 public class App {
+
+    // Logger para registrar el inicio y cierre de la aplicación
+    private static final Logger logger =
+            LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
 
@@ -31,6 +38,11 @@ public class App {
                 // Guardamos el usuario autenticado en la sesión
                 SesionUsuario.establecerUsuario(usuario);
 
+                logger.info(
+                        "Aplicación iniciada por el usuario: {}",
+                        usuario.getNombreUsuario()
+                );
+
                 System.out.println(
                         "\nSesión iniciada como: "
                                 + usuario.getNombreUsuario()
@@ -50,6 +62,8 @@ public class App {
 
         } catch (Exception e) {
 
+            logger.error("Se ha producido un error en la aplicación.", e);
+
             System.err.println(
                     "Error al iniciar la aplicación: "
                             + e.getMessage()
@@ -57,12 +71,14 @@ public class App {
 
         } finally {
 
-            // Cerramos la sesión al terminar la aplicación
+            // Cerramos la sesión
             SesionUsuario.cerrarSesion();
 
             // Cerramos Hibernate y el Scanner
             HibernateUtil.cerrar();
             scanner.close();
+
+            logger.info("Aplicación finalizada.");
         }
     }
 }
