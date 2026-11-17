@@ -1,5 +1,8 @@
 
+import menu.MenuAcceso;
 import menu.MenuPrincipal;
+import modelo.Usuario;
+import servicios.UsuarioServicio;
 import utilidades.HibernateUtil;
 
 import java.util.Scanner;
@@ -8,30 +11,52 @@ public class App {
 
     public static void main(String[] args) {
 
-        // Scanner compartido por todos los menús
         Scanner scanner = new Scanner(System.in);
 
         try {
-            System.out.println("Iniciando aplicación...");
 
-            // Inicializamos Hibernate y comprobamos la conexión
-            HibernateUtil.getSessionFactory();
+            // Creamos el servicio de usuarios
+            UsuarioServicio usuarioServicio = new UsuarioServicio();
 
-            System.out.println("Hibernate inicializado correctamente.");
+            // Mostramos el menú de acceso
+            MenuAcceso menuAcceso = new MenuAcceso(
+                    scanner,
+                    usuarioServicio
+            );
 
-            // Creamos e iniciamos el menú principal
-            MenuPrincipal menuPrincipal = new MenuPrincipal(scanner);
-            menuPrincipal.iniciar();
+            Usuario usuario = menuAcceso.mostrarMenu();
+
+            // Solo entramos en la aplicación si el acceso es correcto
+            if (usuario != null) {
+
+                System.out.println(
+                        "\nSesión iniciada como: " +
+                                usuario.getNombreUsuario()
+                );
+
+                // Abrimos el menú principal
+                MenuPrincipal menuPrincipal =
+                        new MenuPrincipal(scanner, usuario);
+
+                menuPrincipal.iniciar();
+
+            } else {
+
+                System.out.println(
+                        "\nGracias por utilizar GestionProyectos."
+                );
+            }
 
         } catch (Exception e) {
-            System.err.println("Error durante la ejecución de la aplicación:");
-            e.printStackTrace();
+
+            System.err.println(
+                    "Error al iniciar la aplicación: " + e.getMessage()
+            );
 
         } finally {
-            // Cerramos Hibernate al finalizar la aplicación
-            HibernateUtil.cerrar();
 
-            // Cerramos el Scanner
+            // Cerramos Hibernate y liberamos el Scanner
+            HibernateUtil.cerrar();
             scanner.close();
         }
     }

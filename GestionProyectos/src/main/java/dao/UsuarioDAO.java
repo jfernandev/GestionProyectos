@@ -13,4 +13,7 @@ public interface UsuarioDAO {
 
     // Comprueba si un nombre de usuario ya está registrado
     boolean existeNombreUsuario(String nombreUsuario);
+
+    // Comprueba si ya existe algún usuario registrado
+    boolean hayUsuariosRegistrados();
 }

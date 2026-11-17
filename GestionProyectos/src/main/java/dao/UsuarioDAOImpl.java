@@ -78,4 +78,25 @@ public class UsuarioDAOImpl implements UsuarioDAO {
             );
         }
     }
+
+    @Override
+    public boolean hayUsuariosRegistrados() {
+
+        try (Session session =
+                     HibernateUtil.getSessionFactory().openSession()) {
+
+            Long cantidad = session.createQuery(
+                    "SELECT COUNT(u) FROM Usuario u",
+                    Long.class
+            ).getSingleResult();
+
+            return cantidad > 0;
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(
+                    "Error al comprobar los usuarios registrados.", e
+            );
+        }
+    }
 }
