@@ -19,10 +19,6 @@
             gestion_user
         </property>
 
-        <!-- Mostrar consultas SQL -->
-        <property name="hibernate.show_sql">true</property>
-        <property name="hibernate.format_sql">true</property>
-
         <!-- Actualizar las tablas automáticamente -->
         <property name="hibernate.hbm2ddl.auto">update</property>
 
