@@ -5,8 +5,14 @@ import dao.UsuarioDAO;
 import dao.UsuarioDAOImpl;
 import modelo.Usuario;
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UsuarioServicio {
+
+    // Logger para registrar los acontecimientos relacionados con la seguridad
+    private static final Logger logger =
+            LoggerFactory.getLogger(UsuarioServicio.class);
 
     private final UsuarioDAO usuarioDAO;
 
@@ -27,6 +33,8 @@ public class UsuarioServicio {
     ) {
 
         if (usuarioDAO.hayUsuariosRegistrados()) {
+            logger.warn("Intento de crear un administrador inicial cuando ya existen usuarios.");
+
             throw new IllegalStateException(
                     "Ya existe un usuario registrado. " +
                             "No se puede crear otro administrador inicial."
@@ -34,6 +42,8 @@ public class UsuarioServicio {
         }
 
         registrar(nombreUsuario, contrasena, "ADMIN");
+
+        logger.info("Se ha creado el administrador inicial: {}", nombreUsuario);
     }
 
     // Registra un usuario normal
@@ -43,9 +53,11 @@ public class UsuarioServicio {
     ) {
 
         registrar(nombreUsuario, contrasena, "USER");
+
+        logger.info("Se ha registrado un nuevo usuario: {}", nombreUsuario);
     }
 
-    // Método privado que centraliza las validaciones y el registro
+    // Centraliza las validaciones y el registro de usuarios
     private void registrar(
             String nombreUsuario,
             String contrasena,
@@ -94,6 +106,8 @@ public class UsuarioServicio {
         if (nombreUsuario == null || nombreUsuario.isBlank()
                 || contrasena == null || contrasena.isBlank()) {
 
+            logger.warn("Intento de inicio de sesión con datos incompletos.");
+
             throw new IllegalArgumentException(
                     "Debes introducir el usuario y la contraseña."
             );
@@ -103,12 +117,22 @@ public class UsuarioServicio {
                 usuarioDAO.buscarPorNombreUsuario(nombreUsuario);
 
         if (usuario == null) {
+            logger.warn(
+                    "Intento de acceso fallido. Usuario inexistente: {}",
+                    nombreUsuario
+            );
+
             throw new IllegalArgumentException(
                     "Usuario o contraseña incorrectos."
             );
         }
 
         if (!usuario.isActivo()) {
+            logger.warn(
+                    "Intento de acceso con una cuenta desactivada: {}",
+                    nombreUsuario
+            );
+
             throw new IllegalArgumentException(
                     "Esta cuenta está desactivada."
             );
@@ -120,10 +144,21 @@ public class UsuarioServicio {
                 usuario.getContrasenaHash()
         )) {
 
+            logger.warn(
+                    "Intento de acceso con contraseña incorrecta: {}",
+                    nombreUsuario
+            );
+
             throw new IllegalArgumentException(
                     "Usuario o contraseña incorrectos."
             );
         }
+
+        logger.info(
+                "Inicio de sesión correcto. Usuario: {} | Rol: {}",
+                usuario.getNombreUsuario(),
+                usuario.getRol()
+        );
 
         return usuario;
     }

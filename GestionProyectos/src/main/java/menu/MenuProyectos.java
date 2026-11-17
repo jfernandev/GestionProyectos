@@ -199,8 +199,10 @@ public class MenuProyectos {
 
         System.out.println("Proyecto seleccionado: " + proyecto);
 
-        System.out.print("¿Seguro que quieres eliminarlo? (S/N): ");
-        String confirmacion = scanner.nextLine().trim();
+        String confirmacion = Entrada.leerTexto(
+                scanner,
+                "¿Seguro que quieres eliminarlo? (S/N): "
+        );
 
         if (confirmacion.equalsIgnoreCase("S")) {
             proyectoServicio.eliminar(codigo);

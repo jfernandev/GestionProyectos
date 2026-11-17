@@ -31,95 +31,84 @@ public class MenuPrincipal {
                     "Selecciona una opción: "
             );
 
-            switch (opcion) {
-
-                case 1:
-                    if (esAdministrador()) {
-                        MenuProveedores menuProveedores =
-                                new MenuProveedores(scanner);
-                        menuProveedores.iniciar();
-                    } else {
-                        mostrarAccesoDenegado();
-                    }
-                    break;
-
-                case 2:
-                    if (esAdministrador()) {
-                        MenuPiezas menuPiezas =
-                                new MenuPiezas(scanner);
-                        menuPiezas.iniciar();
-                    } else {
-                        mostrarAccesoDenegado();
-                    }
-                    break;
-
-                case 3:
-                    if (esAdministrador()) {
-                        MenuProyectos menuProyectos =
-                                new MenuProyectos(scanner);
-                        menuProyectos.iniciar();
-                    } else {
-                        mostrarAccesoDenegado();
-                    }
-                    break;
-
-                case 4:
-                    if (esAdministrador()) {
-                        MenuGestiones menuGestiones =
-                                new MenuGestiones(scanner);
-                        menuGestiones.iniciar();
-                    } else {
-                        mostrarAccesoDenegado();
-                    }
-                    break;
-
-                case 5:
-                    // Las estadísticas están disponibles para ambos roles
-                    MenuEstadisticas menuEstadisticas =
-                            new MenuEstadisticas(
-                                    scanner,
-                                    new GestionServicio()
-                            );
-
-                    menuEstadisticas.mostrarMenu();
-                    break;
-
-                case 6:
-                    if (esAdministrador()) {
-                        System.out.println(
-                                "\nCerrando la aplicación..."
-                        );
-                    } else {
-                        mostrarAccesoDenegado();
-                    }
-                    break;
-
-                case 2:
-                    if (!esAdministrador()) {
-                        System.out.println(
-                                "\nCerrando la aplicación..."
-                        );
-                    }
-                    break;
-
-                default:
-                    System.out.println("\nOpción no válida.");
-                    break;
+            if (esAdministrador()) {
+                procesarOpcionAdministrador(opcion);
+            } else {
+                procesarOpcionUsuario(opcion);
             }
 
         } while (esAdministrador() ? opcion != 6 : opcion != 2);
     }
 
+    // Procesa las opciones del administrador
+    private void procesarOpcionAdministrador(int opcion) {
+
+        switch (opcion) {
+
+            case 1:
+                new MenuProveedores(scanner).iniciar();
+                break;
+
+            case 2:
+                new MenuPiezas(scanner).iniciar();
+                break;
+
+            case 3:
+                new MenuProyectos(scanner).iniciar();
+                break;
+
+            case 4:
+                new MenuGestiones(scanner).iniciar();
+                break;
+
+            case 5:
+                mostrarEstadisticas();
+                break;
+
+            case 6:
+                System.out.println("\nCerrando la aplicación...");
+                break;
+
+            default:
+                System.out.println("\nOpción no válida.");
+                break;
+        }
+    }
+
+    // Procesa las opciones del usuario normal
+    private void procesarOpcionUsuario(int opcion) {
+
+        switch (opcion) {
+
+            case 1:
+                mostrarEstadisticas();
+                break;
+
+            case 2:
+                System.out.println("\nCerrando la aplicación...");
+                break;
+
+            default:
+                System.out.println("\nOpción no válida.");
+                break;
+        }
+    }
+
+    // Abre el menú de estadísticas
+    private void mostrarEstadisticas() {
+
+        MenuEstadisticas menuEstadisticas =
+                new MenuEstadisticas(
+                        scanner,
+                        new GestionServicio()
+                );
+
+        menuEstadisticas.mostrarMenu();
+    }
+
     // Comprueba si el usuario tiene permisos de administrador
     private boolean esAdministrador() {
         return "ADMIN".equals(usuario.getRol());
-    }
-
-    // Muestra un mensaje cuando el usuario no tiene permisos
-    private void mostrarAccesoDenegado() {
-        System.out.println(
-                "\nNo tienes permisos para realizar esta operación."
-        );
     }
 
     // Muestra las opciones disponibles según el rol
@@ -128,12 +117,15 @@ public class MenuPrincipal {
         System.out.println("\n========================================");
         System.out.println("       GESTIÓN DE PROYECTOS");
         System.out.println("========================================");
+
         System.out.println(
                 "Usuario: " + usuario.getNombreUsuario()
         );
+
         System.out.println(
                 "Rol: " + usuario.getRol()
         );
+
         System.out.println("----------------------------------------");
 
         if (esAdministrador()) {

@@ -1,8 +1,10 @@
+
 package servicios;
 
 import dao.ProveedorDAO;
 import dao.ProveedorDAOImpl;
 import modelo.Proveedor;
+import utilidades.SesionUsuario;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,9 @@ public class ProveedorServicio {
 
     // Registra un proveedor después de validar sus datos
     public void registrar(Proveedor proveedor) {
+
+        // Solo los administradores pueden registrar proveedores
+        SesionUsuario.exigirAdministrador();
 
         try {
             validarProveedor(proveedor);
@@ -130,6 +135,9 @@ public class ProveedorServicio {
     // Actualiza un proveedor existente
     public void actualizar(Proveedor proveedor) {
 
+        // Solo los administradores pueden actualizar proveedores
+        SesionUsuario.exigirAdministrador();
+
         try {
             validarProveedor(proveedor);
 
@@ -153,6 +161,9 @@ public class ProveedorServicio {
 
     // Elimina un proveedor por su código
     public void eliminar(String codigo) {
+
+        // Solo los administradores pueden eliminar proveedores
+        SesionUsuario.exigirAdministrador();
 
         try {
             validarTexto(codigo, "El código");

@@ -1,8 +1,10 @@
+
 package servicios;
 
 import dao.PiezaDAO;
 import dao.PiezaDAOImpl;
 import modelo.Pieza;
+import utilidades.SesionUsuario;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,9 @@ public class PiezaServicio {
 
     // Registra una pieza después de validar sus datos
     public void registrar(Pieza pieza) {
+
+        // Solo los administradores pueden registrar piezas
+        SesionUsuario.exigirAdministrador();
 
         try {
             validarPieza(pieza);
@@ -110,6 +115,9 @@ public class PiezaServicio {
     // Actualiza una pieza existente
     public void actualizar(Pieza pieza) {
 
+        // Solo los administradores pueden actualizar piezas
+        SesionUsuario.exigirAdministrador();
+
         try {
             validarPieza(pieza);
 
@@ -133,6 +141,9 @@ public class PiezaServicio {
 
     // Elimina una pieza por su código
     public void eliminar(String codigo) {
+
+        // Solo los administradores pueden eliminar piezas
+        SesionUsuario.exigirAdministrador();
 
         try {
             validarTexto(codigo, "El código");

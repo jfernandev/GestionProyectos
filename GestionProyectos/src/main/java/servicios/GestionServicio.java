@@ -11,6 +11,7 @@ import dao.ProyectoDAO;
 import dao.ProyectoDAOImpl;
 
 import modelo.Gestion;
+import utilidades.SesionUsuario;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,9 @@ public class GestionServicio {
 
     // Registra una nueva gestión
     public void registrar(Gestion gestion) {
+
+        // Solo los administradores pueden registrar gestiones
+        SesionUsuario.exigirAdministrador();
 
         logger.info("Iniciando registro de gestión.");
 
@@ -102,7 +106,7 @@ public class GestionServicio {
             logger.info("Gestión registrada correctamente.");
 
         } catch (RuntimeException e) {
-            logger.error("Error al registrar la gestión: {}", e.getMessage());
+            logger.error("Error al registrar la gestión.", e);
             throw e;
         }
     }
@@ -121,7 +125,7 @@ public class GestionServicio {
         try {
             return gestionDAO.buscarPorId(id);
         } catch (RuntimeException e) {
-            logger.error("Error al buscar la gestión: {}", e.getMessage());
+            logger.error("Error al buscar la gestión.", e);
             throw e;
         }
     }
@@ -134,7 +138,7 @@ public class GestionServicio {
         try {
             return gestionDAO.listarTodas();
         } catch (RuntimeException e) {
-            logger.error("Error al listar las gestiones: {}", e.getMessage());
+            logger.error("Error al listar las gestiones.", e);
             throw e;
         }
     }
@@ -153,7 +157,7 @@ public class GestionServicio {
         try {
             return gestionDAO.buscarPorProveedor(codigoProveedor);
         } catch (RuntimeException e) {
-            logger.error("Error al buscar gestiones por proveedor: {}", e.getMessage());
+            logger.error("Error al buscar gestiones por proveedor.", e);
             throw e;
         }
     }
@@ -172,7 +176,7 @@ public class GestionServicio {
         try {
             return gestionDAO.buscarPorPieza(codigoPieza);
         } catch (RuntimeException e) {
-            logger.error("Error al buscar gestiones por pieza: {}", e.getMessage());
+            logger.error("Error al buscar gestiones por pieza.", e);
             throw e;
         }
     }
@@ -191,7 +195,7 @@ public class GestionServicio {
         try {
             return gestionDAO.buscarPorProyecto(codigoProyecto);
         } catch (RuntimeException e) {
-            logger.error("Error al buscar gestiones por proyecto: {}", e.getMessage());
+            logger.error("Error al buscar gestiones por proyecto.", e);
             throw e;
         }
     }
@@ -258,7 +262,7 @@ public class GestionServicio {
 
         } catch (RuntimeException e) {
 
-            logger.error("Error en la búsqueda avanzada: {}", e.getMessage());
+            logger.error("Error en la búsqueda avanzada.", e);
             throw e;
         }
     }
@@ -281,8 +285,7 @@ public class GestionServicio {
 
         } catch (RuntimeException e) {
 
-            logger.error("Error al calcular los costes de los proyectos: {}",
-                    e.getMessage());
+            logger.error("Error al calcular los costes de los proyectos.", e);
             throw e;
         }
     }
@@ -302,7 +305,7 @@ public class GestionServicio {
 
         } catch (RuntimeException e) {
 
-            logger.error("Error al calcular la cantidad total: {}", e.getMessage());
+            logger.error("Error al calcular la cantidad total.", e);
             throw e;
         }
     }
@@ -322,8 +325,7 @@ public class GestionServicio {
 
         } catch (RuntimeException e) {
 
-            logger.error("Error al consultar los proveedores más activos: {}",
-                    e.getMessage());
+            logger.error("Error al consultar los proveedores más activos.", e);
             throw e;
         }
     }
@@ -343,14 +345,16 @@ public class GestionServicio {
 
         } catch (RuntimeException e) {
 
-            logger.error("Error al consultar las piezas más utilizadas: {}",
-                    e.getMessage());
+            logger.error("Error al consultar las piezas más utilizadas.", e);
             throw e;
         }
     }
 
     // Actualiza una gestión existente
     public void actualizar(Gestion gestion) {
+
+        // Solo los administradores pueden actualizar gestiones
+        SesionUsuario.exigirAdministrador();
 
         logger.info("Iniciando actualización de gestión.");
 
@@ -412,13 +416,16 @@ public class GestionServicio {
             logger.info("Gestión actualizada correctamente.");
 
         } catch (RuntimeException e) {
-            logger.error("Error al actualizar la gestión: {}", e.getMessage());
+            logger.error("Error al actualizar la gestión.", e);
             throw e;
         }
     }
 
     // Elimina una gestión por su identificador
     public void eliminar(Long id) {
+
+        // Solo los administradores pueden eliminar gestiones
+        SesionUsuario.exigirAdministrador();
 
         logger.info("Iniciando eliminación de gestión: {}", id);
 
@@ -441,7 +448,7 @@ public class GestionServicio {
             logger.info("Gestión eliminada correctamente.");
 
         } catch (RuntimeException e) {
-            logger.error("Error al eliminar la gestión: {}", e.getMessage());
+            logger.error("Error al eliminar la gestión.", e);
             throw e;
         }
     }

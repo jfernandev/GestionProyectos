@@ -4,6 +4,7 @@ package menu;
 import modelo.Usuario;
 import servicios.UsuarioServicio;
 
+import java.io.Console;
 import java.util.Scanner;
 
 public class MenuAcceso {
@@ -69,8 +70,7 @@ public class MenuAcceso {
         System.out.print("Nombre de usuario: ");
         String nombreUsuario = scanner.nextLine();
 
-        System.out.print("Contraseña: ");
-        String contrasena = scanner.nextLine();
+        String contrasena = leerContrasena("Contraseña: ");
 
         try {
 
@@ -100,11 +100,13 @@ public class MenuAcceso {
         System.out.print("Nombre de usuario: ");
         String nombreUsuario = scanner.nextLine();
 
-        System.out.print("Contraseña (mínimo 8 caracteres): ");
-        String contrasena = scanner.nextLine();
+        String contrasena = leerContrasena(
+                "Contraseña (mínimo 8 caracteres): "
+        );
 
-        System.out.print("Repite la contraseña: ");
-        String confirmacion = scanner.nextLine();
+        String confirmacion = leerContrasena(
+                "Repite la contraseña: "
+        );
 
         if (!contrasena.equals(confirmacion)) {
             System.out.println("Las contraseñas no coinciden.");
@@ -127,5 +129,20 @@ public class MenuAcceso {
 
             System.out.println("Error: " + e.getMessage());
         }
+    }
+
+    // Intenta ocultar la contraseña si se ejecuta desde una consola compatible
+    private String leerContrasena(String mensaje) {
+
+        Console consola = System.console();
+
+        if (consola != null) {
+            char[] caracteres = consola.readPassword(mensaje);
+            return caracteres == null ? "" : new String(caracteres);
+        }
+
+        // Alternativa para la consola de IntelliJ
+        System.out.print(mensaje);
+        return scanner.nextLine();
     }
 }

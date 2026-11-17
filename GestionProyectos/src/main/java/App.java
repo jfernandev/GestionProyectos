@@ -4,6 +4,7 @@ import menu.MenuPrincipal;
 import modelo.Usuario;
 import servicios.UsuarioServicio;
 import utilidades.HibernateUtil;
+import utilidades.SesionUsuario;
 
 import java.util.Scanner;
 
@@ -14,8 +15,7 @@ public class App {
         Scanner scanner = new Scanner(System.in);
 
         try {
-
-            // Creamos el servicio de usuarios
+            // Creamos el servicio de autenticación
             UsuarioServicio usuarioServicio = new UsuarioServicio();
 
             // Mostramos el menú de acceso
@@ -26,12 +26,14 @@ public class App {
 
             Usuario usuario = menuAcceso.mostrarMenu();
 
-            // Solo entramos en la aplicación si el acceso es correcto
             if (usuario != null) {
 
+                // Guardamos el usuario autenticado en la sesión
+                SesionUsuario.establecerUsuario(usuario);
+
                 System.out.println(
-                        "\nSesión iniciada como: " +
-                                usuario.getNombreUsuario()
+                        "\nSesión iniciada como: "
+                                + usuario.getNombreUsuario()
                 );
 
                 // Abrimos el menú principal
@@ -41,7 +43,6 @@ public class App {
                 menuPrincipal.iniciar();
 
             } else {
-
                 System.out.println(
                         "\nGracias por utilizar GestionProyectos."
                 );
@@ -50,12 +51,16 @@ public class App {
         } catch (Exception e) {
 
             System.err.println(
-                    "Error al iniciar la aplicación: " + e.getMessage()
+                    "Error al iniciar la aplicación: "
+                            + e.getMessage()
             );
 
         } finally {
 
-            // Cerramos Hibernate y liberamos el Scanner
+            // Cerramos la sesión al terminar la aplicación
+            SesionUsuario.cerrarSesion();
+
+            // Cerramos Hibernate y el Scanner
             HibernateUtil.cerrar();
             scanner.close();
         }

@@ -1,8 +1,10 @@
+
 package servicios;
 
 import dao.ProyectoDAO;
 import dao.ProyectoDAOImpl;
 import modelo.Proyecto;
+import utilidades.SesionUsuario;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,9 @@ public class ProyectoServicio {
 
     // Registra un proyecto después de validar sus datos
     public void registrar(Proyecto proyecto) {
+
+        // Solo los administradores pueden registrar proyectos
+        SesionUsuario.exigirAdministrador();
 
         try {
             validarProyecto(proyecto);
@@ -131,6 +136,9 @@ public class ProyectoServicio {
     // Actualiza un proyecto existente
     public void actualizar(Proyecto proyecto) {
 
+        // Solo los administradores pueden actualizar proyectos
+        SesionUsuario.exigirAdministrador();
+
         try {
             validarProyecto(proyecto);
 
@@ -154,6 +162,9 @@ public class ProyectoServicio {
 
     // Elimina un proyecto por su código
     public void eliminar(String codigo) {
+
+        // Solo los administradores pueden eliminar proyectos
+        SesionUsuario.exigirAdministrador();
 
         try {
             validarTexto(codigo, "El código");
