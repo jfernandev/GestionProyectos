@@ -18,32 +18,23 @@ public class GestionDAOImpl implements GestionDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Recuperamos las entidades gestionadas por Hibernate
             gestion.setProveedor(
-                    session.find(
-                            modelo.Proveedor.class,
-                            gestion.getProveedor().getCodigo()
-                    )
+                    session.find(modelo.Proveedor.class,
+                            gestion.getProveedor().getCodigo())
             );
 
             gestion.setPieza(
-                    session.find(
-                            modelo.Pieza.class,
-                            gestion.getPieza().getCodigo()
-                    )
+                    session.find(modelo.Pieza.class,
+                            gestion.getPieza().getCodigo())
             );
 
             gestion.setProyecto(
-                    session.find(
-                            modelo.Proyecto.class,
-                            gestion.getProyecto().getCodigo()
-                    )
+                    session.find(modelo.Proyecto.class,
+                            gestion.getProyecto().getCodigo())
             );
 
-            // Comprobamos que las tres entidades existen
             if (gestion.getProveedor() == null ||
                     gestion.getPieza() == null ||
                     gestion.getProyecto() == null) {
@@ -53,15 +44,12 @@ public class GestionDAOImpl implements GestionDAO {
                 );
             }
 
-            // Guardamos la gestión
             session.persist(gestion);
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Deshacemos los cambios si ocurre algún error
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
@@ -74,7 +62,6 @@ public class GestionDAOImpl implements GestionDAO {
     public Gestion buscarPorId(Long id) {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-
             return session.find(Gestion.class, id);
 
         } catch (Exception e) {
@@ -181,7 +168,6 @@ public class GestionDAOImpl implements GestionDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Consulta inicial con las relaciones necesarias
             StringBuilder hql = new StringBuilder(
                     "SELECT g FROM Gestion g " +
                             "JOIN FETCH g.proveedor " +
@@ -190,7 +176,6 @@ public class GestionDAOImpl implements GestionDAO {
                             "WHERE 1=1 "
             );
 
-            // Añadimos únicamente los filtros que se hayan indicado
             if (codigoProveedor != null && !codigoProveedor.isBlank()) {
                 hql.append("AND g.proveedor.codigo = :codigoProveedor ");
             }
@@ -219,13 +204,10 @@ public class GestionDAOImpl implements GestionDAO {
                 hql.append("AND g.cantidad <= :cantidadMaxima ");
             }
 
-            // Ordenamos los resultados por fecha descendente
             hql.append("ORDER BY g.fecha DESC, g.id DESC");
 
-            // Creamos la consulta Hibernate
             var consulta = session.createQuery(hql.toString(), Gestion.class);
 
-            // Asignamos los parámetros de los filtros utilizados
             if (codigoProveedor != null && !codigoProveedor.isBlank()) {
                 consulta.setParameter("codigoProveedor", codigoProveedor);
             }
@@ -257,7 +239,100 @@ public class GestionDAOImpl implements GestionDAO {
             return consulta.getResultList();
 
         } catch (Exception e) {
-            throw new RuntimeException("Error al realizar la búsqueda avanzada de gestiones.", e);
+            throw new RuntimeException(
+                    "Error al realizar la búsqueda avanzada de gestiones.", e
+            );
+        }
+    }
+
+    // Calcula el coste total de los suministros agrupados por proyecto
+    @Override
+    public List<Object[]> calcularCostesPorProyecto() {
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            return session.createQuery(
+                    "SELECT g.proyecto.codigo, " +
+                            "g.proyecto.nombre, " +
+                            "SUM(g.cantidad * g.pieza.precio) " +
+                            "FROM Gestion g " +
+                            "JOIN g.pieza " +
+                            "JOIN g.proyecto " +
+                            "GROUP BY g.proyecto.codigo, g.proyecto.nombre " +
+                            "ORDER BY g.proyecto.nombre",
+                    Object[].class
+            ).getResultList();
+
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error al calcular los costes de los proyectos.", e
+            );
+        }
+    }
+
+    // Calcula la cantidad total de unidades suministradas
+    @Override
+    public Long calcularCantidadTotalSuministrada() {
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            return session.createQuery(
+                    "SELECT COALESCE(SUM(g.cantidad), 0) FROM Gestion g",
+                    Long.class
+            ).getSingleResult();
+
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error al calcular la cantidad total suministrada.", e
+            );
+        }
+    }
+
+    // Obtiene los proveedores ordenados por cantidad suministrada
+    @Override
+    public List<Object[]> obtenerProveedoresMasActivos() {
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            return session.createQuery(
+                    "SELECT g.proveedor.codigo, " +
+                            "g.proveedor.nombre, " +
+                            "SUM(g.cantidad) " +
+                            "FROM Gestion g " +
+                            "JOIN g.proveedor " +
+                            "GROUP BY g.proveedor.codigo, g.proveedor.nombre " +
+                            "ORDER BY SUM(g.cantidad) DESC",
+                    Object[].class
+            ).getResultList();
+
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error al obtener los proveedores más activos.", e
+            );
+        }
+    }
+
+    // Obtiene las piezas ordenadas por cantidad utilizada
+    @Override
+    public List<Object[]> obtenerPiezasMasUtilizadas() {
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            return session.createQuery(
+                    "SELECT g.pieza.codigo, " +
+                            "g.pieza.nombre, " +
+                            "SUM(g.cantidad) " +
+                            "FROM Gestion g " +
+                            "JOIN g.pieza " +
+                            "GROUP BY g.pieza.codigo, g.pieza.nombre " +
+                            "ORDER BY SUM(g.cantidad) DESC",
+                    Object[].class
+            ).getResultList();
+
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error al obtener las piezas más utilizadas.", e
+            );
         }
     }
 
@@ -273,28 +348,24 @@ public class GestionDAOImpl implements GestionDAO {
             Gestion gestionExistente = session.find(Gestion.class, gestion.getId());
 
             if (gestionExistente == null) {
-                throw new RuntimeException("No existe ninguna gestión con ese identificador.");
+                throw new RuntimeException(
+                        "No existe ninguna gestión con ese identificador."
+                );
             }
 
             gestion.setProveedor(
-                    session.find(
-                            modelo.Proveedor.class,
-                            gestion.getProveedor().getCodigo()
-                    )
+                    session.find(modelo.Proveedor.class,
+                            gestion.getProveedor().getCodigo())
             );
 
             gestion.setPieza(
-                    session.find(
-                            modelo.Pieza.class,
-                            gestion.getPieza().getCodigo()
-                    )
+                    session.find(modelo.Pieza.class,
+                            gestion.getPieza().getCodigo())
             );
 
             gestion.setProyecto(
-                    session.find(
-                            modelo.Proyecto.class,
-                            gestion.getProyecto().getCodigo()
-                    )
+                    session.find(modelo.Proyecto.class,
+                            gestion.getProyecto().getCodigo())
             );
 
             if (gestion.getProveedor() == null ||
@@ -336,7 +407,9 @@ public class GestionDAOImpl implements GestionDAO {
             Gestion gestion = session.find(Gestion.class, id);
 
             if (gestion == null) {
-                throw new RuntimeException("No existe ninguna gestión con ese identificador.");
+                throw new RuntimeException(
+                        "No existe ninguna gestión con ese identificador."
+                );
             }
 
             session.remove(gestion);

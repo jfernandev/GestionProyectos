@@ -8,22 +8,16 @@ import java.util.List;
 
 public interface GestionDAO {
 
-    // Guarda una nueva gestión
     void guardar(Gestion gestion);
 
-    // Busca una gestión por su identificador
     Gestion buscarPorId(Long id);
 
-    // Devuelve todas las gestiones registradas
     List<Gestion> listarTodas();
 
-    // Busca las gestiones realizadas por un proveedor
     List<Gestion> buscarPorProveedor(String codigoProveedor);
 
-    // Busca las gestiones correspondientes a una pieza
     List<Gestion> buscarPorPieza(String codigoPieza);
 
-    // Busca las gestiones correspondientes a un proyecto
     List<Gestion> buscarPorProyecto(String codigoProyecto);
 
     // Búsqueda avanzada con filtros opcionales
@@ -37,9 +31,19 @@ public interface GestionDAO {
             Integer cantidadMaxima
     );
 
-    // Actualiza una gestión existente
+    // Calcula el coste total agrupado por proyecto
+    List<Object[]> calcularCostesPorProyecto();
+
+    // Calcula la cantidad total de unidades suministradas
+    Long calcularCantidadTotalSuministrada();
+
+    // Devuelve los proveedores ordenados por cantidad suministrada
+    List<Object[]> obtenerProveedoresMasActivos();
+
+    // Devuelve las piezas ordenadas por cantidad utilizada
+    List<Object[]> obtenerPiezasMasUtilizadas();
+
     void actualizar(Gestion gestion);
 
-    // Elimina una gestión por su identificador
     void eliminar(Long id);
 }

@@ -209,7 +209,6 @@ public class GestionServicio {
 
         logger.info("Iniciando búsqueda avanzada de gestiones.");
 
-        // Comprobamos que el rango de fechas sea correcto
         if (fechaDesde != null && fechaHasta != null &&
                 fechaDesde.isAfter(fechaHasta)) {
 
@@ -218,7 +217,6 @@ public class GestionServicio {
             );
         }
 
-        // Comprobamos que el rango de cantidades sea correcto
         if (cantidadMinima != null && cantidadMaxima != null &&
                 cantidadMinima > cantidadMaxima) {
 
@@ -227,7 +225,6 @@ public class GestionServicio {
             );
         }
 
-        // Las cantidades indicadas deben ser positivas
         if (cantidadMinima != null && cantidadMinima <= 0) {
             throw new IllegalArgumentException(
                     "La cantidad mínima debe ser mayor que cero."
@@ -261,11 +258,93 @@ public class GestionServicio {
 
         } catch (RuntimeException e) {
 
-            logger.error(
-                    "Error en la búsqueda avanzada: {}",
-                    e.getMessage()
+            logger.error("Error en la búsqueda avanzada: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    // Calcula el coste total de los suministros agrupados por proyecto
+    public List<Object[]> calcularCostesPorProyecto() {
+
+        logger.info("Calculando costes de los proyectos.");
+
+        try {
+
+            List<Object[]> resultados = gestionDAO.calcularCostesPorProyecto();
+
+            logger.info(
+                    "Cálculo de costes completado. Proyectos encontrados: {}",
+                    resultados.size()
             );
 
+            return resultados;
+
+        } catch (RuntimeException e) {
+
+            logger.error("Error al calcular los costes de los proyectos: {}",
+                    e.getMessage());
+            throw e;
+        }
+    }
+
+    // Calcula la cantidad total de unidades suministradas
+    public Long calcularCantidadTotalSuministrada() {
+
+        logger.info("Calculando cantidad total suministrada.");
+
+        try {
+
+            Long total = gestionDAO.calcularCantidadTotalSuministrada();
+
+            logger.info("Cantidad total calculada: {}", total);
+
+            return total;
+
+        } catch (RuntimeException e) {
+
+            logger.error("Error al calcular la cantidad total: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    // Obtiene los proveedores ordenados por cantidad suministrada
+    public List<Object[]> obtenerProveedoresMasActivos() {
+
+        logger.info("Consultando proveedores más activos.");
+
+        try {
+
+            List<Object[]> resultados = gestionDAO.obtenerProveedoresMasActivos();
+
+            logger.info("Proveedores encontrados: {}", resultados.size());
+
+            return resultados;
+
+        } catch (RuntimeException e) {
+
+            logger.error("Error al consultar los proveedores más activos: {}",
+                    e.getMessage());
+            throw e;
+        }
+    }
+
+    // Obtiene las piezas ordenadas por cantidad utilizada
+    public List<Object[]> obtenerPiezasMasUtilizadas() {
+
+        logger.info("Consultando piezas más utilizadas.");
+
+        try {
+
+            List<Object[]> resultados = gestionDAO.obtenerPiezasMasUtilizadas();
+
+            logger.info("Piezas encontradas: {}", resultados.size());
+
+            return resultados;
+
+        } catch (RuntimeException e) {
+
+            logger.error("Error al consultar las piezas más utilizadas: {}",
+                    e.getMessage());
             throw e;
         }
     }

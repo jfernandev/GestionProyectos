@@ -8,8 +8,11 @@ import modelo.Proyecto;
 import servicios.GestionServicio;
 import utilidades.Entrada;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class MenuGestiones {
@@ -17,7 +20,6 @@ public class MenuGestiones {
     private final Scanner scanner;
     private final GestionServicio gestionServicio;
 
-    // Constructor: recibe el Scanner y prepara el servicio
     public MenuGestiones(Scanner scanner) {
         this.scanner = scanner;
         this.gestionServicio = new GestionServicio();
@@ -64,23 +66,27 @@ public class MenuGestiones {
                     break;
 
                 case 8:
-                    actualizarGestion();
+                    analizarCostesPorProyecto();
                     break;
 
                 case 9:
-                    eliminarGestion();
+                    actualizarGestion();
                     break;
 
                 case 10:
+                    eliminarGestion();
+                    break;
+
+                case 11:
                     System.out.println("\nVolviendo al menú principal...");
                     break;
 
                 default:
-                    System.out.println("\nError: selecciona una opción entre 1 y 10.");
+                    System.out.println("\nError: selecciona una opción entre 1 y 11.");
                     break;
             }
 
-        } while (opcion != 10);
+        } while (opcion != 11);
     }
 
     // Muestra las opciones disponibles
@@ -96,9 +102,10 @@ public class MenuGestiones {
         System.out.println("5. Buscar gestiones por pieza");
         System.out.println("6. Buscar gestiones por proyecto");
         System.out.println("7. Búsqueda avanzada de gestiones");
-        System.out.println("8. Modificar gestión");
-        System.out.println("9. Eliminar gestión");
-        System.out.println("10. Volver al menú principal");
+        System.out.println("8. Análisis de costes por proyecto");
+        System.out.println("9. Modificar gestión");
+        System.out.println("10. Eliminar gestión");
+        System.out.println("11. Volver al menú principal");
         System.out.println("========================================");
     }
 
@@ -225,16 +232,13 @@ public class MenuGestiones {
         System.out.println("\n--- BÚSQUEDA AVANZADA DE GESTIONES ---");
         System.out.println("Deja los campos vacíos si no quieres aplicar ese filtro.\n");
 
-        // Filtros por entidades relacionadas
         String codigoProveedor = leerFiltroTexto("Código del proveedor: ");
         String codigoPieza = leerFiltroTexto("Código de la pieza: ");
         String codigoProyecto = leerFiltroTexto("Código del proyecto: ");
 
-        // Filtros por fechas
         LocalDate fechaDesde = leerFiltroFecha("Fecha desde (AAAA-MM-DD): ");
         LocalDate fechaHasta = leerFiltroFecha("Fecha hasta (AAAA-MM-DD): ");
 
-        // Filtros por cantidad
         Integer cantidadMinima = leerFiltroEntero("Cantidad mínima: ");
         Integer cantidadMaxima = leerFiltroEntero("Cantidad máxima: ");
 
@@ -307,6 +311,54 @@ public class MenuGestiones {
             } catch (NumberFormatException e) {
                 System.out.println("Introduce un número entero válido.");
             }
+        }
+    }
+
+    // Calcula y muestra los costes agrupados por proyecto
+    private void analizarCostesPorProyecto() {
+
+        System.out.println("\n--- ANÁLISIS DE COSTES POR PROYECTO ---");
+
+        try {
+
+            List<Object[]> resultados =
+                    gestionServicio.calcularCostesPorProyecto();
+
+            if (resultados.isEmpty()) {
+                System.out.println("No hay datos suficientes para calcular los costes.");
+                return;
+            }
+
+            NumberFormat formatoEuros =
+                    NumberFormat.getCurrencyInstance(Locale.forLanguageTag("es-ES"));
+
+            System.out.printf("%-15s %-30s %15s%n",
+                    "CÓDIGO", "PROYECTO", "COSTE TOTAL");
+
+            System.out.println("---------------------------------------------------------------");
+
+            BigDecimal costeGlobal = BigDecimal.ZERO;
+
+            for (Object[] fila : resultados) {
+
+                String codigo = (String) fila[0];
+                String nombre = (String) fila[1];
+                BigDecimal coste = new BigDecimal(fila[2].toString());
+
+                System.out.printf("%-15s %-30s %15s%n",
+                        codigo,
+                        nombre,
+                        formatoEuros.format(coste));
+
+                costeGlobal = costeGlobal.add(coste);
+            }
+
+            System.out.println("---------------------------------------------------------------");
+            System.out.println("Coste global de todos los proyectos: "
+                    + formatoEuros.format(costeGlobal));
+
+        } catch (RuntimeException e) {
+            System.out.println("Error al calcular los costes: " + e.getMessage());
         }
     }
 
