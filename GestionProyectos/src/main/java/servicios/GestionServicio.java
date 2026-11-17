@@ -1,3 +1,4 @@
+
 package servicios;
 
 import dao.GestionDAO;
@@ -10,9 +11,6 @@ import dao.ProyectoDAO;
 import dao.ProyectoDAOImpl;
 
 import modelo.Gestion;
-import modelo.Proveedor;
-import modelo.Pieza;
-import modelo.Proyecto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,33 +20,31 @@ import java.util.List;
 
 public class GestionServicio {
 
-    // Logger encargado de registrar las operaciones y los errores
     private static final Logger logger =
             LoggerFactory.getLogger(GestionServicio.class);
 
-    // DAO encargado de las operaciones sobre gestiones
     private final GestionDAO gestionDAO;
-
-    // DAO necesarios para comprobar las entidades relacionadas
     private final ProveedorDAO proveedorDAO;
     private final PiezaDAO piezaDAO;
     private final ProyectoDAO proyectoDAO;
 
-    // Constructor que inicializa todos los DAO
+    // Constructor que utiliza los DAO predeterminados
     public GestionServicio() {
-        this.gestionDAO = new GestionDAOImpl();
-        this.proveedorDAO = new ProveedorDAOImpl();
-        this.piezaDAO = new PiezaDAOImpl();
-        this.proyectoDAO = new ProyectoDAOImpl();
+        this(
+                new GestionDAOImpl(),
+                new ProveedorDAOImpl(),
+                new PiezaDAOImpl(),
+                new ProyectoDAOImpl()
+        );
     }
 
-    // Constructor alternativo para facilitar las pruebas
+    // Constructor que permite inyectar DAO, útil también para las pruebas
     public GestionServicio(
             GestionDAO gestionDAO,
             ProveedorDAO proveedorDAO,
             PiezaDAO piezaDAO,
-            ProyectoDAO proyectoDAO) {
-
+            ProyectoDAO proyectoDAO
+    ) {
         this.gestionDAO = gestionDAO;
         this.proveedorDAO = proveedorDAO;
         this.piezaDAO = piezaDAO;
@@ -58,25 +54,55 @@ public class GestionServicio {
     // Registra una nueva gestión
     public void registrar(Gestion gestion) {
 
+        logger.info("Iniciando registro de gestión.");
+
         try {
-            // Validamos los datos básicos
-            validarGestion(gestion);
 
-            // Comprobamos que las entidades relacionadas existen
-            validarRelaciones(gestion);
+            if (gestion == null) {
+                throw new IllegalArgumentException("La gestión no puede ser nula.");
+            }
 
-            // Guardamos la gestión
+            if (gestion.getFecha() == null) {
+                throw new IllegalArgumentException("La fecha es obligatoria.");
+            }
+
+            if (gestion.getCantidad() == null || gestion.getCantidad() <= 0) {
+                throw new IllegalArgumentException("La cantidad debe ser mayor que cero.");
+            }
+
+            if (gestion.getProveedor() == null ||
+                    gestion.getPieza() == null ||
+                    gestion.getProyecto() == null) {
+
+                throw new IllegalArgumentException(
+                        "Debe indicarse un proveedor, una pieza y un proyecto."
+                );
+            }
+
+            if (proveedorDAO.buscarPorCodigo(
+                    gestion.getProveedor().getCodigo()) == null) {
+
+                throw new IllegalArgumentException("El proveedor indicado no existe.");
+            }
+
+            if (piezaDAO.buscarPorCodigo(
+                    gestion.getPieza().getCodigo()) == null) {
+
+                throw new IllegalArgumentException("La pieza indicada no existe.");
+            }
+
+            if (proyectoDAO.buscarPorCodigo(
+                    gestion.getProyecto().getCodigo()) == null) {
+
+                throw new IllegalArgumentException("El proyecto indicado no existe.");
+            }
+
             gestionDAO.guardar(gestion);
 
-            logger.info(
-                    "Gestión registrada correctamente. Proveedor: {}, Pieza: {}, Proyecto: {}",
-                    gestion.getProveedor().getCodigo(),
-                    gestion.getPieza().getCodigo(),
-                    gestion.getProyecto().getCodigo()
-            );
+            logger.info("Gestión registrada correctamente.");
 
         } catch (RuntimeException e) {
-            logger.error("Error al registrar la gestión.", e);
+            logger.error("Error al registrar la gestión: {}", e.getMessage());
             throw e;
         }
     }
@@ -84,21 +110,18 @@ public class GestionServicio {
     // Busca una gestión por su identificador
     public Gestion buscarPorId(Long id) {
 
+        logger.info("Buscando gestión con identificador: {}", id);
+
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException(
+                    "El identificador debe ser mayor que cero."
+            );
+        }
+
         try {
-            if (id == null || id <= 0) {
-                throw new IllegalArgumentException(
-                        "El identificador debe ser un número positivo."
-                );
-            }
-
-            Gestion gestion = gestionDAO.buscarPorId(id);
-
-            logger.info("Búsqueda de gestión por identificador: {}", id);
-
-            return gestion;
-
+            return gestionDAO.buscarPorId(id);
         } catch (RuntimeException e) {
-            logger.error("Error al buscar la gestión con ID: {}", id, e);
+            logger.error("Error al buscar la gestión: {}", e.getMessage());
             throw e;
         }
     }
@@ -106,118 +129,143 @@ public class GestionServicio {
     // Devuelve todas las gestiones
     public List<Gestion> listarTodas() {
 
+        logger.info("Listando todas las gestiones.");
+
         try {
-            List<Gestion> gestiones = gestionDAO.listarTodas();
-
-            logger.info("Listado de gestiones realizado. Total: {}",
-                    gestiones.size());
-
-            return gestiones;
-
+            return gestionDAO.listarTodas();
         } catch (RuntimeException e) {
-            logger.error("Error al listar las gestiones.", e);
+            logger.error("Error al listar las gestiones: {}", e.getMessage());
             throw e;
         }
     }
 
-    // Busca las gestiones de un proveedor
+    // Busca gestiones por proveedor
     public List<Gestion> buscarPorProveedor(String codigoProveedor) {
 
+        logger.info("Buscando gestiones del proveedor: {}", codigoProveedor);
+
+        if (codigoProveedor == null || codigoProveedor.isBlank()) {
+            throw new IllegalArgumentException(
+                    "El código del proveedor es obligatorio."
+            );
+        }
+
         try {
-            validarTexto(codigoProveedor, "El código del proveedor");
-
-            // Comprobamos que el proveedor exista
-            if (proveedorDAO.buscarPorCodigo(codigoProveedor.trim()) == null) {
-                throw new IllegalArgumentException(
-                        "No existe ningún proveedor con ese código."
-                );
-            }
-
-            List<Gestion> gestiones =
-                    gestionDAO.buscarPorProveedor(codigoProveedor.trim());
-
-            logger.info(
-                    "Búsqueda de gestiones del proveedor {}. Resultados: {}",
-                    codigoProveedor.trim(),
-                    gestiones.size()
-            );
-
-            return gestiones;
-
+            return gestionDAO.buscarPorProveedor(codigoProveedor);
         } catch (RuntimeException e) {
-            logger.error(
-                    "Error al buscar las gestiones del proveedor: {}",
-                    codigoProveedor,
-                    e
-            );
+            logger.error("Error al buscar gestiones por proveedor: {}", e.getMessage());
             throw e;
         }
     }
 
-    // Busca las gestiones correspondientes a una pieza
+    // Busca gestiones por pieza
     public List<Gestion> buscarPorPieza(String codigoPieza) {
 
+        logger.info("Buscando gestiones de la pieza: {}", codigoPieza);
+
+        if (codigoPieza == null || codigoPieza.isBlank()) {
+            throw new IllegalArgumentException(
+                    "El código de la pieza es obligatorio."
+            );
+        }
+
         try {
-            validarTexto(codigoPieza, "El código de la pieza");
-
-            // Comprobamos que la pieza exista
-            if (piezaDAO.buscarPorCodigo(codigoPieza.trim()) == null) {
-                throw new IllegalArgumentException(
-                        "No existe ninguna pieza con ese código."
-                );
-            }
-
-            List<Gestion> gestiones =
-                    gestionDAO.buscarPorPieza(codigoPieza.trim());
-
-            logger.info(
-                    "Búsqueda de gestiones de la pieza {}. Resultados: {}",
-                    codigoPieza.trim(),
-                    gestiones.size()
-            );
-
-            return gestiones;
-
+            return gestionDAO.buscarPorPieza(codigoPieza);
         } catch (RuntimeException e) {
-            logger.error(
-                    "Error al buscar las gestiones de la pieza: {}",
-                    codigoPieza,
-                    e
-            );
+            logger.error("Error al buscar gestiones por pieza: {}", e.getMessage());
             throw e;
         }
     }
 
-    // Busca las gestiones correspondientes a un proyecto
+    // Busca gestiones por proyecto
     public List<Gestion> buscarPorProyecto(String codigoProyecto) {
 
+        logger.info("Buscando gestiones del proyecto: {}", codigoProyecto);
+
+        if (codigoProyecto == null || codigoProyecto.isBlank()) {
+            throw new IllegalArgumentException(
+                    "El código del proyecto es obligatorio."
+            );
+        }
+
         try {
-            validarTexto(codigoProyecto, "El código del proyecto");
+            return gestionDAO.buscarPorProyecto(codigoProyecto);
+        } catch (RuntimeException e) {
+            logger.error("Error al buscar gestiones por proyecto: {}", e.getMessage());
+            throw e;
+        }
+    }
 
-            // Comprobamos que el proyecto exista
-            if (proyectoDAO.buscarPorCodigo(codigoProyecto.trim()) == null) {
-                throw new IllegalArgumentException(
-                        "No existe ningún proyecto con ese código."
-                );
-            }
+    // Búsqueda avanzada con filtros opcionales
+    public List<Gestion> buscarAvanzado(
+            String codigoProveedor,
+            String codigoPieza,
+            String codigoProyecto,
+            LocalDate fechaDesde,
+            LocalDate fechaHasta,
+            Integer cantidadMinima,
+            Integer cantidadMaxima
+    ) {
 
-            List<Gestion> gestiones =
-                    gestionDAO.buscarPorProyecto(codigoProyecto.trim());
+        logger.info("Iniciando búsqueda avanzada de gestiones.");
+
+        // Comprobamos que el rango de fechas sea correcto
+        if (fechaDesde != null && fechaHasta != null &&
+                fechaDesde.isAfter(fechaHasta)) {
+
+            throw new IllegalArgumentException(
+                    "La fecha inicial no puede ser posterior a la fecha final."
+            );
+        }
+
+        // Comprobamos que el rango de cantidades sea correcto
+        if (cantidadMinima != null && cantidadMaxima != null &&
+                cantidadMinima > cantidadMaxima) {
+
+            throw new IllegalArgumentException(
+                    "La cantidad mínima no puede superar la cantidad máxima."
+            );
+        }
+
+        // Las cantidades indicadas deben ser positivas
+        if (cantidadMinima != null && cantidadMinima <= 0) {
+            throw new IllegalArgumentException(
+                    "La cantidad mínima debe ser mayor que cero."
+            );
+        }
+
+        if (cantidadMaxima != null && cantidadMaxima <= 0) {
+            throw new IllegalArgumentException(
+                    "La cantidad máxima debe ser mayor que cero."
+            );
+        }
+
+        try {
+
+            List<Gestion> resultado = gestionDAO.buscarAvanzado(
+                    codigoProveedor,
+                    codigoPieza,
+                    codigoProyecto,
+                    fechaDesde,
+                    fechaHasta,
+                    cantidadMinima,
+                    cantidadMaxima
+            );
 
             logger.info(
-                    "Búsqueda de gestiones del proyecto {}. Resultados: {}",
-                    codigoProyecto.trim(),
-                    gestiones.size()
+                    "Búsqueda avanzada completada. Resultados: {}",
+                    resultado.size()
             );
 
-            return gestiones;
+            return resultado;
 
         } catch (RuntimeException e) {
+
             logger.error(
-                    "Error al buscar las gestiones del proyecto: {}",
-                    codigoProyecto,
-                    e
+                    "Error en la búsqueda avanzada: {}",
+                    e.getMessage()
             );
+
             throw e;
         }
     }
@@ -225,32 +273,67 @@ public class GestionServicio {
     // Actualiza una gestión existente
     public void actualizar(Gestion gestion) {
 
-        try {
-            validarGestion(gestion);
+        logger.info("Iniciando actualización de gestión.");
 
-            if (gestion.getId() == null || gestion.getId() <= 0) {
+        try {
+
+            if (gestion == null) {
+                throw new IllegalArgumentException("La gestión no puede ser nula.");
+            }
+
+            if (gestion.getId() == null) {
                 throw new IllegalArgumentException(
-                        "La gestión debe tener un identificador válido."
+                        "La gestión debe tener un identificador."
                 );
             }
 
-            // Comprobamos que la gestión exista
+            if (gestion.getFecha() == null) {
+                throw new IllegalArgumentException("La fecha es obligatoria.");
+            }
+
+            if (gestion.getCantidad() == null || gestion.getCantidad() <= 0) {
+                throw new IllegalArgumentException("La cantidad debe ser mayor que cero.");
+            }
+
+            if (gestion.getProveedor() == null ||
+                    gestion.getPieza() == null ||
+                    gestion.getProyecto() == null) {
+
+                throw new IllegalArgumentException(
+                        "Debe indicarse un proveedor, una pieza y un proyecto."
+                );
+            }
+
             if (gestionDAO.buscarPorId(gestion.getId()) == null) {
                 throw new IllegalArgumentException(
                         "No existe ninguna gestión con ese identificador."
                 );
             }
 
-            // Comprobamos las entidades relacionadas
-            validarRelaciones(gestion);
+            if (proveedorDAO.buscarPorCodigo(
+                    gestion.getProveedor().getCodigo()) == null) {
+
+                throw new IllegalArgumentException("El proveedor indicado no existe.");
+            }
+
+            if (piezaDAO.buscarPorCodigo(
+                    gestion.getPieza().getCodigo()) == null) {
+
+                throw new IllegalArgumentException("La pieza indicada no existe.");
+            }
+
+            if (proyectoDAO.buscarPorCodigo(
+                    gestion.getProyecto().getCodigo()) == null) {
+
+                throw new IllegalArgumentException("El proyecto indicado no existe.");
+            }
 
             gestionDAO.actualizar(gestion);
 
-            logger.info("Gestión actualizada correctamente. ID: {}",
-                    gestion.getId());
+            logger.info("Gestión actualizada correctamente.");
 
         } catch (RuntimeException e) {
-            logger.error("Error al actualizar la gestión.", e);
+            logger.error("Error al actualizar la gestión: {}", e.getMessage());
             throw e;
         }
     }
@@ -258,14 +341,16 @@ public class GestionServicio {
     // Elimina una gestión por su identificador
     public void eliminar(Long id) {
 
-        try {
-            if (id == null || id <= 0) {
-                throw new IllegalArgumentException(
-                        "El identificador debe ser un número positivo."
-                );
-            }
+        logger.info("Iniciando eliminación de gestión: {}", id);
 
-            // Comprobamos que la gestión exista
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException(
+                    "El identificador debe ser mayor que cero."
+            );
+        }
+
+        try {
+
             if (gestionDAO.buscarPorId(id) == null) {
                 throw new IllegalArgumentException(
                         "No existe ninguna gestión con ese identificador."
@@ -274,86 +359,11 @@ public class GestionServicio {
 
             gestionDAO.eliminar(id);
 
-            logger.info("Gestión eliminada correctamente. ID: {}", id);
+            logger.info("Gestión eliminada correctamente.");
 
         } catch (RuntimeException e) {
-            logger.error("Error al eliminar la gestión. ID: {}", id, e);
+            logger.error("Error al eliminar la gestión: {}", e.getMessage());
             throw e;
-        }
-    }
-
-    // Valida los datos básicos de una gestión
-    private void validarGestion(Gestion gestion) {
-
-        if (gestion == null) {
-            throw new IllegalArgumentException(
-                    "La gestión no puede ser nula."
-            );
-        }
-
-        // La fecha es obligatoria
-        LocalDate fecha = gestion.getFecha();
-
-        if (fecha == null) {
-            throw new IllegalArgumentException(
-                    "La fecha de la gestión es obligatoria."
-            );
-        }
-
-        // La cantidad debe ser positiva
-        if (gestion.getCantidad() == null ||
-                gestion.getCantidad() <= 0) {
-
-            throw new IllegalArgumentException(
-                    "La cantidad debe ser mayor que cero."
-            );
-        }
-    }
-
-    // Comprueba que el proveedor, la pieza y el proyecto existan
-    private void validarRelaciones(Gestion gestion) {
-
-        if (gestion.getProveedor() == null ||
-                gestion.getProveedor().getCodigo() == null ||
-                proveedorDAO.buscarPorCodigo(
-                        gestion.getProveedor().getCodigo()
-                ) == null) {
-
-            throw new IllegalArgumentException(
-                    "El proveedor indicado no existe."
-            );
-        }
-
-        if (gestion.getPieza() == null ||
-                gestion.getPieza().getCodigo() == null ||
-                piezaDAO.buscarPorCodigo(
-                        gestion.getPieza().getCodigo()
-                ) == null) {
-
-            throw new IllegalArgumentException(
-                    "La pieza indicada no existe."
-            );
-        }
-
-        if (gestion.getProyecto() == null ||
-                gestion.getProyecto().getCodigo() == null ||
-                proyectoDAO.buscarPorCodigo(
-                        gestion.getProyecto().getCodigo()
-                ) == null) {
-
-            throw new IllegalArgumentException(
-                    "El proyecto indicado no existe."
-            );
-        }
-    }
-
-    // Comprueba que un texto obligatorio no esté vacío
-    private void validarTexto(String valor, String campo) {
-
-        if (valor == null || valor.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    campo + " no puede estar vacío."
-            );
         }
     }
 }

@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import utilidades.HibernateUtil;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class GestionDAOImpl implements GestionDAO {
@@ -20,8 +21,7 @@ public class GestionDAOImpl implements GestionDAO {
             // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Obtenemos las entidades gestionadas por Hibernate
-            // para asegurar que las relaciones están asociadas a esta sesión
+            // Recuperamos las entidades gestionadas por Hibernate
             gestion.setProveedor(
                     session.find(
                             modelo.Proveedor.class,
@@ -75,7 +75,6 @@ public class GestionDAOImpl implements GestionDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Buscamos la gestión mediante su identificador
             return session.find(Gestion.class, id);
 
         } catch (Exception e) {
@@ -88,7 +87,6 @@ public class GestionDAOImpl implements GestionDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Recuperamos todas las gestiones con sus relaciones
             return session.createQuery(
                     "SELECT g FROM Gestion g " +
                             "JOIN FETCH g.proveedor " +
@@ -108,7 +106,6 @@ public class GestionDAOImpl implements GestionDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Recuperamos las gestiones de un proveedor concreto
             return session.createQuery(
                             "SELECT g FROM Gestion g " +
                                     "JOIN FETCH g.proveedor " +
@@ -131,7 +128,6 @@ public class GestionDAOImpl implements GestionDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Recuperamos las gestiones correspondientes a una pieza
             return session.createQuery(
                             "SELECT g FROM Gestion g " +
                                     "JOIN FETCH g.proveedor " +
@@ -154,7 +150,6 @@ public class GestionDAOImpl implements GestionDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Recuperamos las gestiones correspondientes a un proyecto
             return session.createQuery(
                             "SELECT g FROM Gestion g " +
                                     "JOIN FETCH g.proveedor " +
@@ -172,6 +167,100 @@ public class GestionDAOImpl implements GestionDAO {
         }
     }
 
+    // Búsqueda avanzada con filtros opcionales
+    @Override
+    public List<Gestion> buscarAvanzado(
+            String codigoProveedor,
+            String codigoPieza,
+            String codigoProyecto,
+            LocalDate fechaDesde,
+            LocalDate fechaHasta,
+            Integer cantidadMinima,
+            Integer cantidadMaxima
+    ) {
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            // Consulta inicial con las relaciones necesarias
+            StringBuilder hql = new StringBuilder(
+                    "SELECT g FROM Gestion g " +
+                            "JOIN FETCH g.proveedor " +
+                            "JOIN FETCH g.pieza " +
+                            "JOIN FETCH g.proyecto " +
+                            "WHERE 1=1 "
+            );
+
+            // Añadimos únicamente los filtros que se hayan indicado
+            if (codigoProveedor != null && !codigoProveedor.isBlank()) {
+                hql.append("AND g.proveedor.codigo = :codigoProveedor ");
+            }
+
+            if (codigoPieza != null && !codigoPieza.isBlank()) {
+                hql.append("AND g.pieza.codigo = :codigoPieza ");
+            }
+
+            if (codigoProyecto != null && !codigoProyecto.isBlank()) {
+                hql.append("AND g.proyecto.codigo = :codigoProyecto ");
+            }
+
+            if (fechaDesde != null) {
+                hql.append("AND g.fecha >= :fechaDesde ");
+            }
+
+            if (fechaHasta != null) {
+                hql.append("AND g.fecha <= :fechaHasta ");
+            }
+
+            if (cantidadMinima != null) {
+                hql.append("AND g.cantidad >= :cantidadMinima ");
+            }
+
+            if (cantidadMaxima != null) {
+                hql.append("AND g.cantidad <= :cantidadMaxima ");
+            }
+
+            // Ordenamos los resultados por fecha descendente
+            hql.append("ORDER BY g.fecha DESC, g.id DESC");
+
+            // Creamos la consulta Hibernate
+            var consulta = session.createQuery(hql.toString(), Gestion.class);
+
+            // Asignamos los parámetros de los filtros utilizados
+            if (codigoProveedor != null && !codigoProveedor.isBlank()) {
+                consulta.setParameter("codigoProveedor", codigoProveedor);
+            }
+
+            if (codigoPieza != null && !codigoPieza.isBlank()) {
+                consulta.setParameter("codigoPieza", codigoPieza);
+            }
+
+            if (codigoProyecto != null && !codigoProyecto.isBlank()) {
+                consulta.setParameter("codigoProyecto", codigoProyecto);
+            }
+
+            if (fechaDesde != null) {
+                consulta.setParameter("fechaDesde", fechaDesde);
+            }
+
+            if (fechaHasta != null) {
+                consulta.setParameter("fechaHasta", fechaHasta);
+            }
+
+            if (cantidadMinima != null) {
+                consulta.setParameter("cantidadMinima", cantidadMinima);
+            }
+
+            if (cantidadMaxima != null) {
+                consulta.setParameter("cantidadMaxima", cantidadMaxima);
+            }
+
+            return consulta.getResultList();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al realizar la búsqueda avanzada de gestiones.", e);
+        }
+    }
+
     @Override
     public void actualizar(Gestion gestion) {
 
@@ -179,17 +268,14 @@ public class GestionDAOImpl implements GestionDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Comprobamos que la gestión existe
             Gestion gestionExistente = session.find(Gestion.class, gestion.getId());
 
             if (gestionExistente == null) {
                 throw new RuntimeException("No existe ninguna gestión con ese identificador.");
             }
 
-            // Recuperamos las entidades relacionadas dentro de esta sesión
             gestion.setProveedor(
                     session.find(
                             modelo.Proveedor.class,
@@ -211,7 +297,6 @@ public class GestionDAOImpl implements GestionDAO {
                     )
             );
 
-            // Comprobamos que las relaciones existen
             if (gestion.getProveedor() == null ||
                     gestion.getPieza() == null ||
                     gestion.getProyecto() == null) {
@@ -221,19 +306,16 @@ public class GestionDAOImpl implements GestionDAO {
                 );
             }
 
-            // Actualizamos los datos de la gestión
             gestionExistente.setFecha(gestion.getFecha());
             gestionExistente.setCantidad(gestion.getCantidad());
             gestionExistente.setProveedor(gestion.getProveedor());
             gestionExistente.setPieza(gestion.getPieza());
             gestionExistente.setProyecto(gestion.getProyecto());
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Deshacemos los cambios si ocurre algún error
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
@@ -249,25 +331,20 @@ public class GestionDAOImpl implements GestionDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // Iniciamos la transacción
             transaction = session.beginTransaction();
 
-            // Buscamos la gestión que queremos eliminar
             Gestion gestion = session.find(Gestion.class, id);
 
             if (gestion == null) {
                 throw new RuntimeException("No existe ninguna gestión con ese identificador.");
             }
 
-            // Eliminamos la gestión
             session.remove(gestion);
 
-            // Confirmamos los cambios
             transaction.commit();
 
         } catch (Exception e) {
 
-            // Deshacemos los cambios si ocurre algún error
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }

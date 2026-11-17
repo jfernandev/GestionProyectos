@@ -60,23 +60,27 @@ public class MenuGestiones {
                     break;
 
                 case 7:
-                    actualizarGestion();
+                    buscarAvanzado();
                     break;
 
                 case 8:
-                    eliminarGestion();
+                    actualizarGestion();
                     break;
 
                 case 9:
+                    eliminarGestion();
+                    break;
+
+                case 10:
                     System.out.println("\nVolviendo al menú principal...");
                     break;
 
                 default:
-                    System.out.println("\nError: selecciona una opción entre 1 y 9.");
+                    System.out.println("\nError: selecciona una opción entre 1 y 10.");
                     break;
             }
 
-        } while (opcion != 9);
+        } while (opcion != 10);
     }
 
     // Muestra las opciones disponibles
@@ -91,9 +95,10 @@ public class MenuGestiones {
         System.out.println("4. Buscar gestiones por proveedor");
         System.out.println("5. Buscar gestiones por pieza");
         System.out.println("6. Buscar gestiones por proyecto");
-        System.out.println("7. Modificar gestión");
-        System.out.println("8. Eliminar gestión");
-        System.out.println("9. Volver al menú principal");
+        System.out.println("7. Búsqueda avanzada de gestiones");
+        System.out.println("8. Modificar gestión");
+        System.out.println("9. Eliminar gestión");
+        System.out.println("10. Volver al menú principal");
         System.out.println("========================================");
     }
 
@@ -109,8 +114,6 @@ public class MenuGestiones {
         String codigoPieza = Entrada.leerTexto(scanner, "Código de la pieza: ");
         String codigoProyecto = Entrada.leerTexto(scanner, "Código del proyecto: ");
 
-        // Creamos objetos con los códigos de las entidades relacionadas.
-        // El servicio y el DAO comprobarán que existen en la base de datos.
         Proveedor proveedor = new Proveedor(codigoProveedor, null, null, null);
         Pieza pieza = new Pieza(codigoPieza, null, null, null);
         Proyecto proyecto = new Proyecto(codigoProyecto, null, null);
@@ -216,6 +219,97 @@ public class MenuGestiones {
         }
     }
 
+    // Realiza una búsqueda avanzada mediante filtros opcionales
+    private void buscarAvanzado() {
+
+        System.out.println("\n--- BÚSQUEDA AVANZADA DE GESTIONES ---");
+        System.out.println("Deja los campos vacíos si no quieres aplicar ese filtro.\n");
+
+        // Filtros por entidades relacionadas
+        String codigoProveedor = leerFiltroTexto("Código del proveedor: ");
+        String codigoPieza = leerFiltroTexto("Código de la pieza: ");
+        String codigoProyecto = leerFiltroTexto("Código del proyecto: ");
+
+        // Filtros por fechas
+        LocalDate fechaDesde = leerFiltroFecha("Fecha desde (AAAA-MM-DD): ");
+        LocalDate fechaHasta = leerFiltroFecha("Fecha hasta (AAAA-MM-DD): ");
+
+        // Filtros por cantidad
+        Integer cantidadMinima = leerFiltroEntero("Cantidad mínima: ");
+        Integer cantidadMaxima = leerFiltroEntero("Cantidad máxima: ");
+
+        try {
+
+            List<Gestion> gestiones = gestionServicio.buscarAvanzado(
+                    codigoProveedor,
+                    codigoPieza,
+                    codigoProyecto,
+                    fechaDesde,
+                    fechaHasta,
+                    cantidadMinima,
+                    cantidadMaxima
+            );
+
+            System.out.println("\n--- RESULTADOS DE LA BÚSQUEDA AVANZADA ---");
+            mostrarResultados(gestiones);
+
+        } catch (RuntimeException e) {
+            System.out.println("\nNo se ha podido realizar la búsqueda.");
+            System.out.println("Motivo: " + e.getMessage());
+        }
+    }
+
+    // Lee un filtro de texto permitiendo dejarlo vacío
+    private String leerFiltroTexto(String mensaje) {
+
+        System.out.print(mensaje);
+        String texto = scanner.nextLine().trim();
+
+        return texto.isEmpty() ? null : texto;
+    }
+
+    // Lee una fecha opcional
+    private LocalDate leerFiltroFecha(String mensaje) {
+
+        while (true) {
+
+            System.out.print(mensaje);
+            String texto = scanner.nextLine().trim();
+
+            if (texto.isEmpty()) {
+                return null;
+            }
+
+            try {
+                return LocalDate.parse(texto);
+
+            } catch (Exception e) {
+                System.out.println("Formato incorrecto. Utiliza AAAA-MM-DD.");
+            }
+        }
+    }
+
+    // Lee un número entero opcional
+    private Integer leerFiltroEntero(String mensaje) {
+
+        while (true) {
+
+            System.out.print(mensaje);
+            String texto = scanner.nextLine().trim();
+
+            if (texto.isEmpty()) {
+                return null;
+            }
+
+            try {
+                return Integer.parseInt(texto);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Introduce un número entero válido.");
+            }
+        }
+    }
+
     // Modifica una gestión existente
     private void actualizarGestion() {
 
@@ -255,7 +349,6 @@ public class MenuGestiones {
                     proyecto
             );
 
-            // Conservamos el identificador de la gestión original
             gestionActualizada.setId(id);
 
             gestionServicio.actualizar(gestionActualizada);
