@@ -3,6 +3,8 @@ package menu;
 
 import utilidades.Entrada;
 
+import servicios.GestionServicio;
+
 import java.util.Scanner;
 
 public class MenuPrincipal {
@@ -47,15 +49,24 @@ public class MenuPrincipal {
                     break;
 
                 case 5:
+                    // Accedemos al menú de estadísticas
+                    MenuEstadisticas menuEstadisticas = new MenuEstadisticas(
+                            scanner,
+                            new GestionServicio()
+                    );
+                    menuEstadisticas.mostrarMenu();
+                    break;
+
+                case 6:
                     System.out.println("\nCerrando la aplicación...");
                     break;
 
                 default:
-                    System.out.println("\nError: selecciona una opción entre 1 y 5.");
+                    System.out.println("\nError: selecciona una opción entre 1 y 6.");
                     break;
             }
 
-        } while (opcion != 5);
+        } while (opcion != 6);
     }
 
     // Muestra las opciones principales
@@ -68,7 +79,8 @@ public class MenuPrincipal {
         System.out.println("2. Gestión de piezas");
         System.out.println("3. Gestión de proyectos");
         System.out.println("4. Gestión de gestiones");
-        System.out.println("5. Salir");
+        System.out.println("5. Estadísticas");
+        System.out.println("6. Salir");
         System.out.println("========================================");
     }
 }
