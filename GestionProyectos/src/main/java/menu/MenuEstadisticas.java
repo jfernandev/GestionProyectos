@@ -1,9 +1,12 @@
 
 package menu;
 
+import modelo.Gestion;
 import servicios.GestionServicio;
+import servicios.ExportacionCSVServicio;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -13,31 +16,42 @@ public class MenuEstadisticas {
 
     private final Scanner scanner;
     private final GestionServicio gestionServicio;
+    private final ExportacionCSVServicio exportacionServicio;
 
     // Constructor: recibe el Scanner y el servicio de gestiones
-    public MenuEstadisticas(Scanner scanner, GestionServicio gestionServicio) {
+    public MenuEstadisticas(
+            Scanner scanner,
+            GestionServicio gestionServicio
+    ) {
         this.scanner = scanner;
         this.gestionServicio = gestionServicio;
+
+        this.exportacionServicio =
+                new ExportacionCSVServicio(gestionServicio);
     }
 
     // Muestra el menú de estadísticas
     public void mostrarMenu() {
 
         int opcion;
+        boolean salir = false;
 
-        do {
+        while (!salir) {
+
             System.out.println("\n===== ESTADÍSTICAS =====");
             System.out.println("1. Cantidad total suministrada");
             System.out.println("2. Proveedores más activos");
             System.out.println("3. Piezas más utilizadas");
             System.out.println("4. Costes por proyecto");
-            System.out.println("5. Volver");
+            System.out.println("5. Exportar todos los datos a CSV");
+            System.out.println("6. Volver al menú principal");
             System.out.print("Selecciona una opción: ");
 
             try {
                 opcion = Integer.parseInt(scanner.nextLine());
 
                 switch (opcion) {
+
                     case 1:
                         mostrarCantidadTotal();
                         break;
@@ -55,7 +69,11 @@ public class MenuEstadisticas {
                         break;
 
                     case 5:
-                        System.out.println("Volviendo al menú principal...");
+                        exportarDatos();
+                        break;
+
+                    case 6:
+                        salir = true;
                         break;
 
                     default:
@@ -63,23 +81,18 @@ public class MenuEstadisticas {
                 }
 
             } catch (NumberFormatException e) {
-                opcion = 0;
-                System.out.println("Debes introducir un número válido.");
-            } catch (RuntimeException e) {
-                opcion = 0;
-                System.out.println("Error: " + e.getMessage());
+                System.out.println("Debes introducir un número.");
             }
-
-        } while (opcion != 5);
+        }
     }
 
-    // Muestra la cantidad total de unidades suministradas
+    // Muestra la cantidad total suministrada
     private void mostrarCantidadTotal() {
 
-        Long total = gestionServicio.calcularCantidadTotalSuministrada();
+        Long cantidad =
+                gestionServicio.calcularCantidadTotalSuministrada();
 
-        System.out.println("\n===== CANTIDAD TOTAL SUMINISTRADA =====");
-        System.out.println("Unidades suministradas: " + total);
+        System.out.println("\nCantidad total suministrada: " + cantidad);
     }
 
     // Muestra los proveedores ordenados por cantidad suministrada
@@ -95,17 +108,13 @@ public class MenuEstadisticas {
             return;
         }
 
-        System.out.printf("%-15s %-30s %-20s%n",
-                "CÓDIGO", "PROVEEDOR", "UNIDADES");
+        for (Object[] resultado : resultados) {
 
-        System.out.println("----------------------------------------------------------------");
-
-        for (Object[] fila : resultados) {
-
-            System.out.printf("%-15s %-30s %-20s%n",
-                    fila[0],
-                    fila[1],
-                    fila[2]);
+            System.out.println(
+                    "Código: " + resultado[0] +
+                            " | Proveedor: " + resultado[1] +
+                            " | Cantidad suministrada: " + resultado[2]
+            );
         }
     }
 
@@ -122,17 +131,13 @@ public class MenuEstadisticas {
             return;
         }
 
-        System.out.printf("%-15s %-30s %-20s%n",
-                "CÓDIGO", "PIEZA", "UNIDADES");
+        for (Object[] resultado : resultados) {
 
-        System.out.println("----------------------------------------------------------------");
-
-        for (Object[] fila : resultados) {
-
-            System.out.printf("%-15s %-30s %-20s%n",
-                    fila[0],
-                    fila[1],
-                    fila[2]);
+            System.out.println(
+                    "Código: " + resultado[0] +
+                            " | Pieza: " + resultado[1] +
+                            " | Cantidad utilizada: " + resultado[2]
+            );
         }
     }
 
@@ -150,28 +155,59 @@ public class MenuEstadisticas {
         }
 
         NumberFormat formatoMoneda =
-                NumberFormat.getCurrencyInstance(Locale.forLanguageTag("es-ES"));
+                NumberFormat.getCurrencyInstance(
+                        new Locale("es", "ES")
+                );
 
-        BigDecimal costeGlobal = BigDecimal.ZERO;
+        BigDecimal costeTotal = BigDecimal.ZERO;
 
-        System.out.printf("%-15s %-30s %-20s%n",
-                "CÓDIGO", "PROYECTO", "COSTE TOTAL");
+        for (Object[] resultado : resultados) {
 
-        System.out.println("----------------------------------------------------------------");
+            BigDecimal coste = (BigDecimal) resultado[2];
 
-        for (Object[] fila : resultados) {
+            if (coste == null) {
+                coste = BigDecimal.ZERO;
+            }
 
-            BigDecimal coste = (BigDecimal) fila[2];
+            costeTotal = costeTotal.add(coste);
 
-            costeGlobal = costeGlobal.add(coste);
-
-            System.out.printf("%-15s %-30s %-20s%n",
-                    fila[0],
-                    fila[1],
-                    formatoMoneda.format(coste));
+            System.out.println(
+                    "Código: " + resultado[0] +
+                            " | Proyecto: " + resultado[1] +
+                            " | Coste: " + formatoMoneda.format(coste)
+            );
         }
 
-        System.out.println("----------------------------------------------------------------");
-        System.out.println("Coste global: " + formatoMoneda.format(costeGlobal));
+        System.out.println(
+                "\nCoste total de todos los proyectos: " +
+                        formatoMoneda.format(costeTotal)
+        );
+    }
+
+    // Exporta todos los datos a archivos CSV
+    private void exportarDatos() {
+
+        System.out.println("\n===== EXPORTACIÓN CSV =====");
+
+        try {
+
+            List<Path> archivos =
+                    exportacionServicio.exportarTodo();
+
+            System.out.println("Exportación completada correctamente.");
+
+            System.out.println("\nArchivos generados:");
+
+            for (Path archivo : archivos) {
+                System.out.println("- " + archivo);
+            }
+
+        } catch (RuntimeException e) {
+
+            System.out.println(
+                    "No se pudieron exportar los datos: " +
+                            e.getMessage()
+            );
+        }
     }
 }
