@@ -38,11 +38,19 @@
             <version>${mariadb.version}</version>
         </dependency>
 
-        <!-- Pruebas automatizadas -->
+        <!-- Framework para realizar pruebas automatizadas -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
+            <version>5.12.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Biblioteca para simular los DAO durante las pruebas -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.15.2</version>
             <scope>test</scope>
         </dependency>
 
